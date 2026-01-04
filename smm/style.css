@@ -1,0 +1,65 @@
+html { 
+    scroll-behavior: smooth;
+}
+body { 
+    font-family: 'Roboto', sans-serif; 
+    background-color: #f7fafc;
+}
+.urdu { 
+    font-family: 'Noto Nastaliq Urdu', serif; 
+    direction: rtl;
+}
+.gradient {
+    background: linear-gradient(90deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
+}
+.faq-content { 
+    display: none;
+}
+.faq.active .faq-content { 
+    display: block;
+}
+.star-rating i { 
+    cursor: pointer; 
+    transition: color 0.2s;
+}
+/* Style for Initial Avatar */
+.initial-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+    background-color: #3b82f6; /* Default Blue */
+    flex-shrink: 0;
+    font-size: 1rem;
+    border: 2px solid #fff; 
+}
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 60    0;
+    white-space: nowrap;
+}
+/* Mobile Menu styles for smooth appearance */
+.dropdown-menu {
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.dropdown-menu.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+.order-card-link {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    display: inline-block;
+}
