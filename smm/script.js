@@ -1037,10 +1037,10 @@ const SERVICE_DATA = {
 // --- LIVE PRICING DATA & DEFAULTS ---
 let SERVICE_DATA_PRICES = {}; 
 const DEFAULT_PRICING_FALLBACK = {
-    'TikTok': { Followers: 0.20, Likes: 0.12, Views: 0.05, Comments: 0.35 },
-    'Instagram': { Followers: 0.25, Likes: 0.13, Views: 0.07, Comments: 0.40 },
-    'YouTube': { Subscribers: 0.30, Likes: 0.17, Views: 0.08, Comments: 0.45 },
-    'Facebook': { Followers: 0.22, Likes: 0.15, Views: 0.09, Reactions: 0.18 }
+    'TikTok': { Followers: 0.020, Likes: 0.0012, Views: 0.0005, Comments: 0.0035 },
+    'Instagram': { Followers: 0.025, Likes: 0.0013, Views: 0.0007, Comments: 0.0040 },
+    'YouTube': { Subscribers: 0.030, Likes: 0.0017, Views: 0.0008, Comments: 0.0045 },
+    'Facebook': { Followers: 0.022, Likes: 0.0015, Views: 0.0009, Reactions: 0.0018 }
 };
 
 // --- PAYMENT DETAILS ---
@@ -1048,7 +1048,7 @@ const PAYMENT_ACCOUNTS = {
     'JazzCash': { name: "Nazim Mustafa", number: "03105784772" },
     'EasyPaisa': { name: "Nazim Mustafa", number: "03105784772" },
     'BankTransfer': { name: "Nazim Mustafa (myABL)", number: "14720010142555460012" },
-    'Binance': { name: "Contact Admin", number: "N/A" }
+    'Binance': { name: "Contact Admin", number: "+923105784772" }
 };
 
 
