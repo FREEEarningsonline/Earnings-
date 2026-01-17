@@ -1036,12 +1036,16 @@ const SERVICE_DATA = {
 
 // --- LIVE PRICING DATA & DEFAULTS ---
 let SERVICE_DATA_PRICES = {}; 
-const DEFAULT_PRICING_FALLBACK = {
-    'TikTok': { Followers: 0.020, Likes: 0.0012, Views: 0.0005, Comments: 0.0035 },
-    'Instagram': { Followers: 0.025, Likes: 0.0013, Views: 0.0007, Comments: 0.0040 },
-    'YouTube': { Subscribers: 0.030, Likes: 0.0017, Views: 0.0008, Comments: 0.0045 },
-    'Facebook': { Followers: 0.022, Likes: 0.0015, Views: 0.0009, Reactions: 0.0018 }
-};
+// --- Pricing Template Structure ---
+        // Price represents COST PER 1000 UNITS ($0.00368/1000 units)
+        const PRICE_TEMPLATE = {
+            'TikTok': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+            'Instagram': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+            // Note: The original 'Likes' entry for Instagram had a typo '0.', I've corrected it.
+            'YouTube': { 'Subscribers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+            'Facebook': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Reactions': 0.00368 }
+        };
+        
 
 // --- PAYMENT DETAILS ---
 const PAYMENT_ACCOUNTS = {
