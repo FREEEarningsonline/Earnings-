@@ -10,18 +10,19 @@
   <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
   <!-- Font Awesome CDN -->
   <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css" rel="stylesheet">
+  <!-- Urdu Font -->
+  <link href="https://fonts.googleapis.com/earlyaccess/notonastaliqurdu.css" rel="stylesheet">
   
-  <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css"> 
-  
-  <!-- Firebase SDKs -->
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Firebase SDKs (remain in HTML for quick initialization) -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
-  <!-- Urdu Font -->
-  <link href="https://fonts.googleapis.com/earlyaccess/notonastaliqurdu.css" rel="stylesheet">
+
 </head>
 <body class="relative">
 
@@ -222,7 +223,7 @@
 
         <label class="block mb-2 text-sm lang lang-en">Quantity (in 1000s, Min 1k):</label>
         <label class="block mb-2 text-sm lang lang-ur urdu hidden">مقدار (ہزاروں میں، کم از کم 1k):</label>
-        <input type="number" id="order-quantity" placeholder="e.g., 10 for 1000 items" min="10" class="w-full p-3 border mb-3 rounded-lg">
+        <input type="number" id="order-quantity" placeholder="e.g., 1 for 1000 items" min="1" class="w-full p-3 border mb-3 rounded-lg">
 
         <p class="mb-4 text-md font-semibold text-gray-700 lang lang-en">
             Total Cost: <span id="order-total-cost" class="text-red-500">$0.00</span>
@@ -322,13 +323,13 @@
     <div class="text-center md:text-left mb-6 md:mb-0">
       <h2 class="text-xl sm:text-2xl font-bold mb-3 text-blue-900 lang lang-en">Secure Local Payment Methods</h2>
       <h2 class="text-xl sm:text-2xl font-bold mb-3 text-blue-900 lang lang-ur urdu hidden">محفوظ مقامی پیمنٹ میتھڈز</h2>
-      <p class="mb-2 text-sm lang lang-en">Pay easily with JazzCash, EasyPaisa, myABL, Crypto and more.</p>
-      <p class="mb-2 text-sm lang lang-ur urdu hidden">آسانی سے جاز کیش، ایزی پیسہ، اپایسہ، کے ذریعے ادائیگی کریں۔</p>
+      <p class="mb-2 text-sm lang lang-en">Pay easily with JazzCash, EasyPaisa, Upaisa, SadaPay, NayaPay and more.</p>
+      <p class="mb-2 text-sm lang lang-ur urdu hidden">آسانی سے جاز کیش، ایزی پیسہ، اپایسہ، صدہ پے، نیا پے کے ذریعے ادائیگی کریں۔</p>
     </div>
     <div class="flex flex-wrap items-center justify-center md:justify-end gap-4 text-4xl sm:text-5xl">
-      <img src="https://i.ibb.co/PGzYQcpp/1000210331.jpg" alt="Easypasa" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
-      <img src="https://i.ibb.co/PGggRvWr/1000210332.png" alt="Jazz Cash" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
-      <img src="https://i.ibb.co/KjNW071p/1000210333.jpg" alt="Sadapay" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
+      <img src="https://i.ibb.co/PGggRvWr/1000210332.png" alt="Jazzcash" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
+      <img src="https://i.ibb.co/PGzYQcpp/1000210331.jpg" alt="Easypaisa" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
+      <img src="https://i.ibb.co/KjNW071p/1000210333.jpg" alt="myABL" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
       <img src="https://cdn-icons-png.flaticon.com/512/7208/7208609.png" alt="Upaisa" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
     </div>
   </div>
@@ -419,7 +420,7 @@
           <i class="fas fa-chevron-down ml-auto text-gray-400"></i>
         </div>
         <div class="faq-content text-blue-800 text-sm mt-2 lang lang-en">
-          We accept JazzCash, EasyPaisa, Upaisa, SadaPay, NayaPay and more.
+          We accept JazzCash, EasyPaisa, myABL  Crypto  and more.
         </div>
         <div class="faq-content text-blue-800 text-sm mt-2 lang lang-ur urdu hidden urdu">
           ہم جاز کیش، ایزی پیسہ، اپایسہ، صدہ پے اور نیا پے قبول کرتے ہیں۔
@@ -447,23 +448,24 @@
   <div class="max-w-3xl mx-auto">
     <h2 class="text-2xl font-bold text-center mb-8 text-blue-900 lang lang-en">Contact Us</h2>
     <h2 class="text-2xl font-bold text-center mb-8 text-blue-900 lang lang-ur urdu hidden">ہم سے رابطہ کریں</h2>
-    <form class="bg-blue-50 rounded-lg p-6 sm:p-8 shadow space-y-5">
+    <form id="contact-form" class="bg-blue-50 rounded-lg p-6 sm:p-8 shadow space-y-5">
       <div class="md:flex gap-4">
-        <input type="text" placeholder="Your Name" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-en">
+        <input type="text" id="contact-name" placeholder="Your Name" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-en">
         <input type="text" placeholder="نام" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-ur urdu hidden urdu">
-        <input type="email" placeholder="Email Address" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-en">
+        <input type="email" id="contact-email" placeholder="Email Address" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-en">
         <input type="email" placeholder="ای میل" class="w-full md:w-1/2 p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-3 md:mb-0 lang lang-ur urdu hidden urdu">
       </div>
-      <textarea placeholder="How can we help you?" rows="4" class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 lang lang-en"></textarea>
+      <textarea id="contact-message" placeholder="How can we help you?" rows="4" class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 lang lang-en"></textarea>
       <textarea placeholder="ہم آپ کی کس طرح مدد کر سکتے ہیں؟" rows="4" class="w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-400 mb-2 lang lang-ur urdu hidden urdu"></textarea>
-      <button type="submit" class="bg-blue-700 text-white px-8 py-2 rounded-lg hover:bg-blue-800 font-bold w-full lang lang-en">Send Message</button>
+      <p id="contact-form-status" class="text-center text-sm hidden"></p>
+      <button type="submit" id="contact-submit-btn" class="bg-blue-700 text-white px-8 py-2 rounded-lg hover:bg-blue-800 font-bold w-full lang lang-en">Send Message</button>
       <button type="submit" class="bg-blue-700 text-white px-8 py-2 rounded-lg hover:bg-blue-800 font-bold w-full lang lang-ur urdu hidden">پیغام بھیجیں</button>
     </form>
     <div class="flex flex-wrap justify-between items-center mt-6 px-2 text-sm sm:text-base">
-      <span class="mb-2 sm:mb-0 lang lang-en"><i class="fas fa-envelope text-blue-700"></i> mn16913176@gmail.com</span>
-      <span class="mb-2 sm:mb-0 lang lang-ur urdu hidden"><i class="fas fa-envelope text-blue-700"></i> mn16913176@gmail.com</span>
-      <span class="lang lang-en"><i class="fas fa-phone text-blue-700"></i> 03105784772</span>
-      <span class="lang lang-ur urdu hidden"><i class="fas fa-phone text-blue-700"></i> 03105784772</span>
+      <span class="mb-2 sm:mb-0 lang lang-en"><i class="fas fa-envelope text-blue-700"></i> mn1691316@gmail.com</span>
+      <span class="mb-2 sm:mb-0 lang lang-ur urdu hidden"><i class="fas fa-envelope text-blue-700"></i> mn1691316@gmail.com</span>
+      <span class="lang lang-en"><i class="fas fa-phone text-blue-700"></i> +92 313 0599032</span>
+      <span class="lang lang-ur urdu hidden"><i class="fas fa-phone text-blue-700"></i> +92 313 0599032</span>
     </div>
   </div>
 </section>
@@ -567,13 +569,14 @@
       <a href="#contact" class="hover:underline lang lang-ur urdu hidden">رابطہ کریں</a>
     </div>
     <div class="mt-2 md:mt-0">
-      <span class="text-blue-100 lang lang-en">Designed by YoursMed</span>
-      <span class="text-blue-100 lang lang-ur urdu hidden urdu">ڈیزائن بائی Genspark AI</span>
+      <span class="text-blue-100 lang lang-en">Designed By YoursMed King </span>
+      <span class="text-blue-100 lang lang-ur urdu hidden urdu">ڈیزائن بائی YoursMed King </span>
     </div>
   </div>
 </footer>
 
-<!-- External Script -->
-<script src="script.js"></script> 
+<!-- Custom JavaScript -->
+<script src="script.js" defer></script>
+
 </body>
 </html>
