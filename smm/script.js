@@ -1,35 +1,36 @@
+// --- STATIC CONFIG ---
+const STATIC_PROFILE_IMG_URL = "https://i.ibb.co/GftBsS3/IMG-20260104-WA0001.jpg";
 
-        // ===============================================
-        // == GLOBAL CONFIGURATION AND INITIALIZATION ==
-        // ===============================================
+// --- FIREBASE CONFIG ---
+const firebaseConfig = {
+    apiKey: "AIzaSyDNYv9SNUjMAHlaPzfovyYefoBNDgx4Gd4", 
+    authDomain: "traffic-exchange-62a58.firebaseapp.com",
+    projectId: "traffic-exchange-62a58",
+    storageBucket: "traffic-exchange-62a58.appspot.com",
+    messagingSenderId: "474999317287",
+    appId: "1:474999317287:web:8e28a2f5f1a959d8ce3f02",
+    measurementId: "G-HJQ46RQNZS"
+};
 
-        // --- STATIC CONFIG ---
-        const STATIC_PROFILE_IMG_URL = "https://i.ibb.co/GftBsS3/IMG-20260104-WA0001.jpg";
-        
-        // --- ADMIN ACCESS CONTROL ---
-        const ADMIN_EMAIL = "nazimmustafa911@gmail.com"; // <-- IMPORTANT: REPLACE WITH YOUR ADMIN EMAIL
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 
-        // --- FIREBASE CONFIG ---
-        const firebaseConfig = {
-            apiKey: "AIzaSyDNYv9SNUjMAHlaPzfovyYefoBNDgx4Gd4", 
-            authDomain: "traffic-exchange-62a58.firebaseapp.com",
-            projectId: "traffic-exchange-62a58",
-            storageBucket: "traffic-exchange-62a58.appspot.com",
-            messagingSenderId: "474999317287",
-            appId: "1:474999317287:web:8e28a2f5f1a959d8ce3f02",
-            measurementId: "G-HJQ46RQNZS"
-        };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+const auth = firebase.auth();
+const db = firebase.firestore();
 
-        // --- STATIC TESTIMONIALS ---
-        const STATIC_TESTIMONIALS = [
-            { name: "Ali Raza 1", comment: "Best experience overall. Order instant start hua aur result clear tha.", rating: 4, initialColor: '#4f46e5', isStatic: true },
+// --- STATIC TESTIMONIALS ---
+const STATIC_TESTIMONIALS = [
+    { name: "Ali Raza", comment: "Best experience ever! Order delivery was fast and my TikTok account grew in hours. Recommended!", rating: 5, initialColor: '#4f46e5', isStatic: true },
+    { name: "Fatima Khan", comment: "Local payment options made it so easy. Customer support was active even at midnight!", rating: 5, initialColor: '#ec4899', isStatic: true },
+    { name: "Usman A.", comment: "Excellent service for Instagram followers. Delivery started instantly.", rating: 4, initialColor: '#059669', isStatic: true },
+    { name: "Hina M.", comment: "Used for YouTube views, very fast and non-drop. Great pricing!", rating: 5, initialColor: '#f97316', isStatic: true },
+    { name: "Aamir Z.", comment: "Had an issue with link format, support quickly fixed it. Reliable service.", rating: 4, initialColor: '#10b981', isStatic: true },
+    { name: "Laiba R.", comment: "Affordable and genuine. My Facebook page got the boost it needed.", rating: 5, initialColor: '#8b5cf6', isStatic: true },
+    { name: "Shahid P.", comment: "First time trying SMM panel, PakSocialBoost made it simple. Highly recommended for local users.", rating: 5, initialColor: '#ef4444', isStatic: true },
+    { name: "Sana B.", comment: "The quality of followers is better than other panels I've tried.", rating: 4, initialColor: '#facc15', isStatic: true },
+    { name: "Zubair H.", comment: "Very fast deposits using JazzCash. Transparent process.", rating: 5, initialColor: '#06b6d4', isStatic: true },
+    { name: "Noor J.", comment: "Switched from an international panel due to better local support here. Satisfied.", rating: 5, initialColor: '#db2777', isStatic: true },
  { name: "Fatima Khan 2", comment: "Local payment ki wajah se process bohat easy raha.", rating: 5, initialColor: '#ec4899', isStatic: true },
   { name: "Usman Ali 3", comment: "Customer support responsive tha aur issue jaldi solve ho gaya.", rating: 5, initialColor: '#059669', isStatic: true },
   { name: "Hina Malik 4", comment: "Instagram followers ki quality expected se better nikli.", rating: 4, initialColor: '#f97316', isStatic: true },
@@ -1033,1579 +1034,1024 @@
   { name: "Komal Anwar 1000", comment: "Overall reliable service lagi, recommend kar sakti hoon.", rating: 5, initialColor: '#db2777', isStatic: true },
         ];
 
-        // --- SERVICE DATA (Structure for services/urdu translation) ---
-        const SERVICE_DATA = {
-            'TikTok': { urdu: 'ٹک ٹاک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-            'Instagram': { urdu: 'انسٹاگرام', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-            'YouTube': { urdu: 'یوٹیوب', services: { 'Subscribers': { urdu: 'سبسکرائبرز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-            'Facebook': { urdu: 'فیس بک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'لائکس' }, 'Views': { urdu: 'ویوز' }, 'Reactions': { urdu: 'ری ایکشنز' } } }
-        };
 
-        // --- LIVE PRICING DATA & DEFAULTS ---
-        let SERVICE_DATA_PRICES = {}; 
+// --- SERVICE DATA (Structure for services/urdu translation) ---
+const SERVICE_DATA = {
+    'TikTok': { urdu: 'ٹک ٹاک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
+    'Instagram': { urdu: 'انسٹاگرام', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
+    'YouTube': { urdu: 'یوٹیوب', services: { 'Subscribers': { urdu: 'سبسکرائبرز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
+    'Facebook': { urdu: 'فیس بک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'لائکس' }, 'Views': { urdu: 'ویوز' }, 'Reactions': { urdu: 'ری ایکشنز' } } }
+};
+
+// --- LIVE PRICING DATA & DEFAULTS ---
+let SERVICE_DATA_PRICES = {}; // This will hold the actual live pricing data from Firestore.
+
+// This is the FALLBACK pricing. If the 'servicePricing' document in Firestore is not found or is empty,
+// these prices will be used.
+// WARNING: These values represent the COST PER 1000 UNITS.
+// For example, 0.00368 means $0.00368 for 1000 followers, which is extremely low.
+// Please verify if this is your actual intended pricing. If you meant $3.68 for 1000 items,
+// the value should be 3.68.
+const DEFAULT_PRICING_FALLBACK = {
+    'TikTok': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+    'Instagram': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+    'YouTube': { 'Subscribers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
+    'Facebook': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Reactions': 0.00368 }
+};
+
+// --- PAYMENT DETAILS ---
+const PAYMENT_ACCOUNTS = {
+    'JazzCash': { name: "Nazim Mustafa", number: "03105784772" },
+    'EasyPaisa': { name: "Nazim Mustafa", number: "03105784772" },
+    'BankTransfer': { name: "Nazim Mustafa (myABL)", number: "14720010142555460012" },
+    'Binance': { name: "Contact Admin", number: "+92 313 0599032" }
+};
+
+// ------------------- UI & Language Functions -------------------
+
+let currentLanguage = 'en';
+
+function applyCurrentLanguage() {
+    if (currentLanguage === 'en') {
+        document.querySelectorAll('.lang-en').forEach(e => e.classList.remove('hidden'));
+        document.querySelectorAll('.lang-ur').forEach(e => e.classList.add('hidden'));
+    } else {
+        document.querySelectorAll('.lang-en').forEach(e => e.classList.add('hidden'));
+        document.querySelectorAll('.lang-ur').forEach(e => e.classList.remove('hidden'));
+    }
+}
+
+document.getElementById('lang-en').addEventListener('click', function() {
+    currentLanguage = 'en';
+    applyCurrentLanguage();
+});
+
+document.getElementById('lang-ur').addEventListener('click', function() {
+    currentLanguage = 'ur';
+    applyCurrentLanguage();
+});
+
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    applyCurrentLanguage();
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
+
+function scrollToDashboard() {
+    document.getElementById('user-dashboard').scrollIntoView({ behavior: 'smooth' });
+}
+
+function formatDate(timestamp) {
+    if (timestamp && timestamp.toDate) {
+        try {
+            return timestamp.toDate().toLocaleString();
+        } catch (e) {
+            return 'Invalid Date';
+        }
+    }
+    return 'N/A';
+}
+
+
+function showDashboardTab(tabName) {
+    // Close mobile menu if open
+    const menu = document.getElementById('mobile-menu-dropdown');
+    if(menu.classList.contains('open')) {
+        toggleMobileMenu();
+    }
+
+    const contents = {
+        orders: document.getElementById('dashboard-content-orders'),
+        deposits: document.getElementById('dashboard-content-deposits'),
+        reviews: document.getElementById('dashboard-content-reviews')
+    };
+    
+    const tabs = ['orders', 'deposits', 'reviews'];
+    
+    tabs.forEach(name => contents[name].classList.add('hidden'));
+
+    document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+        tab.classList.remove('border-blue-600', 'text-blue-600');
+        tab.classList.add('text-gray-600', 'hover:text-blue-600', 'border-transparent');
+    });
+
+    contents[tabName].classList.remove('hidden');
+    document.querySelectorAll(`#tab-${tabName}, #tab-${tabName}-ur`).forEach(tab => {
+        tab.classList.add('border-blue-600', 'text-blue-600');
+        tab.classList.remove('text-gray-600', 'hover:text-blue-600', 'border-transparent');
+    });
+
+    if (auth.currentUser) {
+        if (tabName === 'orders') loadUserOrders(auth.currentUser.uid);
+        if (tabName === 'deposits') loadUserDeposits(auth.currentUser.uid);
+    }
+    
+    if (tabName === 'reviews') {
+         loadTestimonialsTab();
+    }
+    
+    applyCurrentLanguage(); 
+}
+
+// Mobile Menu Toggle
+document.getElementById('mobile-menu-button').addEventListener('click', toggleMobileMenu);
+
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobile-menu-dropdown');
+    menu.classList.toggle('open');
+}
+
+// FAQ toggle
+document.querySelectorAll('#faq-list .faq').forEach(faq => {
+    faq.addEventListener('click', function() {
+        faq.classList.toggle('active');
+    });
+});
+
+// ------------------- INITIALS AVATAR LOGIC -------------------
+
+function getInitial(name) {
+    return (name && name.length > 0) ? name.charAt(0).toUpperCase() : 'U';
+}
+
+function generateColor(seed) {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+        hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    let color = '#';
+    for (let i = 0; i < 3; i++) {
+        let value = (hash >> (i * 8)) & 0xFF;
+        color += ('00' + value.toString(16)).substr(-2);
+    }
+    return color;
+}
+
+function createInitialAvatarHTML(name, seed = name, initialColor = null) {
+    const initial = getInitial(name);
+    const color = initialColor || generateColor(seed); 
+    return `<div class="initial-avatar mr-3" style="background-color: ${color};">${initial}</div>`;
+}
+
+// --- Status Class Helper for User Panel ---
+function getUserStatusClass(status) {
+    switch (status) {
+        case 'Pending':
+        case 'Pending Review':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'Approved':
+        case 'Processing':
+            return 'bg-blue-100 text-blue-800';
+        case 'Complete':
+            return 'bg-green-100 text-green-800';
+        case 'Canceled':
+        case 'Rejected':
+            return 'bg-red-100 text-red-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+}
+
+
+// ------------------- LIVE PRICE LOGIC -------------------
+
+async function loadServicePrices() {
+    // Use a live listener (onSnapshot) to keep prices updated in real-time
+    // This document name 'servicePricing' should match what the admin panel saves to.
+    db.collection('prices').doc('servicePricing').onSnapshot(doc => { 
+        if (doc.exists && doc.data()) {
+            SERVICE_DATA_PRICES = doc.data();
+            console.log("Using prices from Firestore 'servicePricing' document.");
+        } else {
+            // If 'servicePricing' document doesn't exist or is empty, fall back to default pricing
+            SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
+            console.warn("Firestore 'servicePricing' document not found or empty. Using DEFAULT_PRICING_FALLBACK.");
+        }
+        updatePricingDisplays(); // Always update UI after loading prices
+    }, error => {
+        console.error("Error fetching service prices from Firestore, using defaults:", error);
+        SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
+        updatePricingDisplays(); // Still update UI with fallbacks on error
+    });
+}
+
+function getPriceForService(platform, service) {
+    // Prioritize dynamically loaded prices (from SERVICE_DATA_PRICES)
+    if (SERVICE_DATA_PRICES[platform] && SERVICE_DATA_PRICES[platform][service] !== undefined) {
+        return parseFloat(SERVICE_DATA_PRICES[platform][service]);
+    }
+    // Fallback to static defaults if dynamic data is missing for a specific service/platform
+    if (DEFAULT_PRICING_FALLBACK[platform] && DEFAULT_PRICING_FALLBACK[platform][service] !== undefined) {
+        return parseFloat(DEFAULT_PRICING_FALLBACK[platform][service]);
+    }
+    return 0.00; // Default to 0 if price isn't found anywhere
+}
+
+function updatePricingDisplays() {
+    // These IDs directly correspond to the platforms and services in your pricing objects
+    const pricesToUpdate = {
+        'price-TikTok-Followers': getPriceForService('TikTok', 'Followers'),
+        'price-Instagram-Likes': getPriceForService('Instagram', 'Likes'),
+        'price-YouTube-Views': getPriceForService('YouTube', 'Views'),
+        'price-Facebook-Followers': getPriceForService('Facebook', 'Followers'),
+    };
+
+    for (const id in pricesToUpdate) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.textContent = `$${pricesToUpdate[id].toFixed(2)}`;
+        }
+    }
+    // Re-render any open service selection or order modals to reflect new prices
+    // This needs to be done explicitly because modals might be open when prices change.
+    const serviceSelectModal = document.getElementById('service-select-modal');
+    if (serviceSelectModal && !serviceSelectModal.classList.contains('hidden')) {
+        const platformEn = document.getElementById('selected-platform-display-en').textContent;
+        const platformUr = document.getElementById('selected-platform-display-ur').textContent;
+        // Re-open/re-render to update the buttons with new prices
+        openServiceSelectModal(platformEn, platformUr); 
+    }
+    const orderModal = document.getElementById('order-modal');
+    if (orderModal && !orderModal.classList.contains('hidden')) {
+        // Just update the cost in the current order modal if it's open
+        updateOrderCost();
+    }
+}
+
+// --- Deposit Details Display ---
+function displayPaymentDetails() {
+    const method = document.getElementById('deposit-method').value;
+    const detailsEl = document.getElementById('payment-details');
+    
+    if (method && PAYMENT_ACCOUNTS[method]) {
+        const data = PAYMENT_ACCOUNTS[method];
         
-        // Price represents COST PER 1000 UNITS ($0.00368/1000 units)
-        const DEFAULT_PRICING_FALLBACK = {
-            'TikTok': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
-            'Instagram': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
-            'YouTube': { 'Subscribers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
-            'Facebook': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Reactions': 0.00368 }
-        };
-        
-        // Admin Panel uses PRICE_TEMPLATE (structure is the same as fallback)
-        const PRICE_TEMPLATE = DEFAULT_PRICING_FALLBACK;
-        let currentPricingData = {}; 
-        
-        // --- PAYMENT DETAILS ---
-        const PAYMENT_ACCOUNTS = {
-            'JazzCash': { name: "Nazim Mustafa", number: "03105784772" },
-            'EasyPaisa': { name: "Nazim Mustafa", number: "03105784772" },
-            'BankTransfer': { name: "Nazim Mustafa (myABL)", number: "14720010142555460012" },
-            'Binance': { name: "Contact Admin", number: "+923105784772" }
-        };
+        document.getElementById('payment-name').innerHTML = 
+            `<span class="lang lang-en">Account Name: </span><span class="font-semibold">${data.name}</span>`;
+        document.getElementById('payment-number').innerHTML = 
+            `<span class="lang lang-en">Account Number: </span><span class="font-semibold">${data.number}</span>`;
 
-        // ===============================================
-        // == UTILITY FUNCTIONS (SHARED) ==
-        // ===============================================
+        detailsEl.classList.remove('hidden');
+        applyCurrentLanguage();
+    } else {
+        detailsEl.classList.add('hidden');
+    }
+}
 
-        let currentLanguage = 'en';
+// ------------------- FIREBASE DATA FETCHING (User Dashboard) -------------------
 
-        function getStatusClass(status) {
-            switch (status) {
-                case 'Pending':
-                case 'Pending Review': return 'bg-yellow-100 text-yellow-800';
-                case 'Processing': return 'bg-blue-100 text-blue-800';
-                case 'Approved':
-                case 'Complete': return 'bg-green-100 text-green-800';
-                case 'Canceled':
-                case 'Rejected': return 'bg-red-100 text-red-800';
-                default: return 'bg-gray-100 text-gray-800';
-            }
+async function loadUserProfile(userId) {
+    try {
+        const doc = await db.collection('users').doc(userId).get();
+        if (doc.exists) {
+            const userData = doc.data();
+            const balance = userData.balance ? parseFloat(userData.balance).toFixed(2) : '0.00';
+            document.getElementById('user-balance').textContent = `$${balance}`;
+            return userData;
+        } else {
+             await db.collection('users').doc(userId).set({ balance: '0.00' }, { merge: true });
+             document.getElementById('user-balance').textContent = `$0.00`;
+             return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
         }
-        
-        // --- Status Class Helper for User Panel ---
-        function getUserStatusClass(status) {
-            switch (status) {
-                case 'Pending':
-                case 'Pending Review':
-                    return 'bg-yellow-100 text-yellow-800';
-                case 'Approved':
-                case 'Processing':
-                    return 'bg-blue-100 text-blue-800';
-                case 'Complete':
-                    return 'bg-green-100 text-green-800';
-                case 'Canceled':
-                case 'Rejected':
-                    return 'bg-red-100 text-red-800';
-                default:
-                    return 'bg-gray-100 text-gray-800';
-            }
-        }
+    } catch (e) {
+        console.error("Error loading user profile:", e);
+    }
+    document.getElementById('user-balance').textContent = '$0.00';
+    return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
+}
 
-        function formatDate(timestamp) {
-            if (timestamp && timestamp.toDate) {
-                try {
-                    return timestamp.toDate().toLocaleString();
-                } catch (e) {
-                    return 'Invalid Date';
-                }
-            }
-            return 'N/A';
-        }
-        
-        // ------------------- UI & Language Functions -------------------
-        
-        function applyCurrentLanguage() {
-            if (currentLanguage === 'en') {
-                document.querySelectorAll('.lang-en').forEach(e => e.classList.remove('hidden'));
-                document.querySelectorAll('.lang-ur').forEach(e => e.classList.add('hidden'));
-            } else {
-                document.querySelectorAll('.lang-en').forEach(e => e.classList.add('hidden'));
-                document.querySelectorAll('.lang-ur').forEach(e => e.classList.remove('hidden'));
-            }
-        }
-        
-        // Initial setup for language buttons (wrapped in check)
-        const langEnBtn = document.getElementById('lang-en');
-        if (langEnBtn) {
-            langEnBtn.addEventListener('click', function() {
-                currentLanguage = 'en';
-                applyCurrentLanguage();
-            });
-        }
 
-        const langUrBtn = document.getElementById('lang-ur');
-        if (langUrBtn) {
-            langUrBtn.addEventListener('click', function() {
-                currentLanguage = 'ur';
-                applyCurrentLanguage();
-            });
-        }
+function loadUserOrders(userId) {
+    const orderListEl = document.getElementById('order-list');
+    orderListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your orders...</p>`;
 
-        function openModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.remove('hidden');
-                applyCurrentLanguage();
-            }
-        }
+    db.collection('orders')
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get()
+      .then((querySnapshot) => {
+        orderListEl.innerHTML = ''; 
 
-        function closeModal(id) {
-            const modal = document.getElementById(id);
-            if (modal) {
-                modal.classList.add('hidden');
-            }
-        }
-
-        function scrollToDashboard() {
-            const dashboard = document.getElementById('user-dashboard');
-            if (dashboard) {
-                dashboard.scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-        
-        // --- INITIALS AVATAR LOGIC ---
-
-        function getInitial(name) {
-            return (name && name.length > 0) ? name.charAt(0).toUpperCase() : 'U';
-        }
-
-        function generateColor(seed) {
-            let hash = 0;
-            for (let i = 0; i < seed.length; i++) {
-                hash = seed.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            let color = '#';
-            for (let i = 0; i < 3; i++) {
-                let value = (hash >> (i * 8)) & 0xFF;
-                color += ('00' + value.toString(16)).substr(-2);
-            }
-            return color;
-        }
-
-        function createInitialAvatarHTML(name, seed = name, initialColor = null) {
-            const initial = getInitial(name);
-            const color = initialColor || generateColor(seed); 
-            return `<div class="initial-avatar mr-3" style="background-color: ${color};">${initial}</div>`;
-        }
-
-        // ===============================================
-        // == USER PANEL LOGIC ==
-        // ===============================================
-
-        function showDashboardTab(tabName) {
-            // Close mobile menu if open
-            const menu = document.getElementById('mobile-menu-dropdown');
-            if(menu && menu.classList.contains('open')) {
-                toggleMobileMenu();
-            }
-
-            const contents = {
-                orders: document.getElementById('dashboard-content-orders'),
-                deposits: document.getElementById('dashboard-content-deposits'),
-                reviews: document.getElementById('dashboard-content-reviews')
-            };
-            
-            const tabs = ['orders', 'deposits', 'reviews'];
-            
-            tabs.forEach(name => {
-                if (contents[name]) contents[name].classList.add('hidden');
-            });
-
-            document.querySelectorAll('[id^="tab-"]').forEach(tab => {
-                tab.classList.remove('border-blue-600', 'text-blue-600');
-                tab.classList.add('text-gray-600', 'hover:text-blue-600', 'border-transparent');
-            });
-
-            const contentEl = contents[tabName];
-            if (contentEl) contentEl.classList.remove('hidden');
-            
-            document.querySelectorAll(`#tab-${tabName}, #tab-${tabName}-ur`).forEach(tab => {
-                tab.classList.add('border-blue-600', 'text-blue-600');
-                tab.classList.remove('text-gray-600', 'hover:text-blue-600', 'border-transparent');
-            });
-
-            if (auth.currentUser) {
-                if (tabName === 'orders') loadUserOrders(auth.currentUser.uid);
-                if (tabName === 'deposits') loadUserDeposits(auth.currentUser.uid);
-            }
-            
-            if (tabName === 'reviews') {
-                 loadTestimonialsTab();
-            }
-            
+        if (querySnapshot.empty) {
+            orderListEl.innerHTML = `<p class="p-4 bg-white rounded shadow text-center lang lang-en">You have not placed any orders yet.</p><p class="p-4 bg-white rounded shadow text-center lang lang-ur urdu hidden urdu">آپ نے ابھی تک کوئی آرڈر نہیں کیا۔</p>`;
             applyCurrentLanguage(); 
+            return;
         }
 
-        // Mobile Menu Toggle (wrapped in check)
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', toggleMobileMenu);
-        }
+        querySnapshot.forEach((doc) => {
+            const data = doc.data(); 
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu-dropdown');
-            if (menu) {
-                menu.classList.toggle('open');
-            }
-        }
+            const status = data.status || 'Pending';
+            const quantity = data.quantity || 'N/A';
+            const service = data.service || 'N/A';
+            const totalCost = parseFloat(data.totalCost || 0).toFixed(2);
+            const link = data.link || '#';
+            const senderReference = data.senderReference || 'N/A';
 
-        // FAQ toggle
-        document.querySelectorAll('#faq-list .faq').forEach(faq => {
-            faq.addEventListener('click', function() {
-                faq.classList.toggle('active');
-            });
-        });
+            const statusColor = getUserStatusClass(status);
 
-        // ------------------- LIVE PRICE LOGIC -------------------
-
-        async function loadServicePrices() {
-            db.collection('prices').doc('servicePricing').onSnapshot(doc => {
-                if (doc.exists) {
-                    SERVICE_DATA_PRICES = doc.data();
-                } else {
-                    SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
-                    console.warn("Using default prices as Firestore prices document was not found.");
-                }
-                updatePricingDisplays();
-            }, error => {
-                console.error("Error fetching service prices, using defaults:", error);
-                SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
-                updatePricingDisplays();
-            });
-        }
-
-        function getPriceForService(platform, service) {
-            if (SERVICE_DATA_PRICES[platform] && SERVICE_DATA_PRICES[platform][service] !== undefined) {
-                return parseFloat(SERVICE_DATA_PRICES[platform][service]);
-            }
-            if (DEFAULT_PRICING_FALLBACK[platform] && DEFAULT_PRICING_FALLBACK[platform][service] !== undefined) {
-                return parseFloat(DEFAULT_PRICING_FALLBACK[platform][service]);
-            }
-            return 0.00;
-        }
-
-        function updatePricingDisplays() {
-            // Update the few displayed prices on the main page
-            const pricesToUpdate = {
-                'price-TikTok-Followers': getPriceForService('TikTok', 'Followers'),
-                'price-Instagram-Likes': getPriceForService('Instagram', 'Likes'),
-                'price-YouTube-Views': getPriceForService('YouTube', 'Views'),
-                'price-Facebook-Followers': getPriceForService('Facebook', 'Followers'),
-            };
-
-            for (const id in pricesToUpdate) {
-                const el = document.getElementById(id);
-                if (el) {
-                    // Displaying to five decimal places since the price is very small
-                    el.textContent = `$${pricesToUpdate[id].toFixed(5)} / 1k`; 
-                }
-            }
-        }
-
-        // --- Deposit Details Display ---
-        function displayPaymentDetails() {
-            const methodEl = document.getElementById('deposit-method');
-            if (!methodEl) return;
-            
-            const method = methodEl.value;
-            const detailsEl = document.getElementById('payment-details');
-            
-            if (method && PAYMENT_ACCOUNTS[method] && detailsEl) {
-                const data = PAYMENT_ACCOUNTS[method];
-                
-                const nameLabel = currentLanguage === 'ur' ? 'اکاؤنٹ کا نام:' : 'Account Name:';
-                const numberLabel = currentLanguage === 'ur' ? 'اکاؤنٹ نمبر/فون:' : 'Account Number/Phone:';
-                
-                const paymentNameEl = document.getElementById('payment-name');
-                const paymentNumberEl = document.getElementById('payment-number');
-
-                if (paymentNameEl) paymentNameEl.innerHTML = 
-                    `<span class="font-medium">${nameLabel}</span> <span class="font-semibold">${data.name}</span>`;
-                if (paymentNumberEl) paymentNumberEl.innerHTML = 
-                    `<span class="font-medium">${numberLabel}</span> <span class="font-semibold">${data.number}</span>`;
-
-                detailsEl.classList.remove('hidden');
-                applyCurrentLanguage();
-            } else if (detailsEl) {
-                detailsEl.classList.add('hidden');
-            }
-        }
-
-        // ------------------- FIREBASE DATA FETCHING (User Dashboard) -------------------
-
-        async function loadUserProfile(userId) {
-            try {
-                const doc = await db.collection('users').doc(userId).get();
-                const userBalanceEl = document.getElementById('user-balance');
-                
-                if (doc.exists) {
-                    const userData = doc.data();
-                    const balance = userData.balance ? parseFloat(userData.balance).toFixed(2) : '0.00';
-                    if (userBalanceEl) userBalanceEl.textContent = `$${balance}`;
-                    return userData;
-                } else {
-                     await db.collection('users').doc(userId).set({ balance: '0.00' }, { merge: true });
-                     if (userBalanceEl) userBalanceEl.textContent = `$0.00`;
-                     return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
-                }
-            } catch (e) {
-                console.error("Error loading user profile:", e);
-            }
-            const userBalanceEl = document.getElementById('user-balance');
-            if (userBalanceEl) userBalanceEl.textContent = '$0.00';
-            return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
-        }
+            let statusTextUrdu = '';
+            if (status === 'Pending') statusTextUrdu = 'زیر التواء';
+            else if (status === 'Approved' || status === 'Processing') statusTextUrdu = 'منظور شدہ';
+            else if (status === 'Complete') statusTextUrdu = 'مکمل';
+            else if (status === 'Canceled') statusTextUrdu = 'منسوخ';
 
 
-        function loadUserOrders(userId) {
-            const orderListEl = document.getElementById('order-list');
-            if (!orderListEl) return;
-            
-            orderListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your orders...</p>`;
+            const date = formatDate(data.createdAt);
+            const isCanceled = data.status === 'Canceled';
 
-            db.collection('orders')
-              .where('userId', '==', userId)
-              .orderBy('createdAt', 'desc')
-              .get()
-              .then((querySnapshot) => {
-                orderListEl.innerHTML = ''; 
-
-                if (querySnapshot.empty) {
-                    orderListEl.innerHTML = `<p class="p-4 bg-white rounded shadow text-center lang lang-en">You have not placed any orders yet.</p><p class="p-4 bg-white rounded shadow text-center lang lang-ur urdu hidden urdu">آپ نے ابھی تک کوئی آرڈر نہیں کیا۔</p>`;
-                    applyCurrentLanguage(); 
-                    return;
-                }
-
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data(); 
-                    // ... (Order card generation logic remains the same)
-                    const status = data.status || 'Pending';
-                    const quantity = data.quantity || 'N/A';
-                    const service = data.service || 'N/A';
-                    const totalCost = parseFloat(data.totalCost || 0).toFixed(2);
-                    const link = data.link || '#';
-                    const senderReference = data.senderReference || 'N/A';
-
-                    const statusColor = getUserStatusClass(status);
-
-                    let statusTextUrdu = '';
-                    if (status === 'Pending') statusTextUrdu = 'زیر التواء';
-                    else if (status === 'Approved' || status === 'Processing') statusTextUrdu = 'منظور شدہ';
-                    else if (status === 'Complete') statusTextUrdu = 'مکمل';
-                    else if (status === 'Canceled') statusTextUrdu = 'منسوخ';
-
-
-                    const date = formatDate(data.createdAt);
-                    const isCanceled = data.status === 'Canceled';
-
-                    const orderHtml = `
-                        <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-blue-500">
-                            <div class="space-y-1 text-sm flex-grow">
-                                <p class="font-bold text-base text-blue-900 lang lang-en">${service} (Qty: ${quantity})</p>
-                                <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">${service} (مقدار: ${quantity})</p>
-                                <p class="text-xs text-gray-600 lang lang-en">Cost: $${totalCost} | Ordered on: ${date}</p>
-                                <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">لاگت: $${totalCost} | تاریخ: ${date}</p>
-                                <p class="text-xs text-gray-400 lang lang-en break-all">Link: <span class="order-card-link">${link}</span> (Ref: ${senderReference})</p>
-                                ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
-                                ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
-                            </div>
-                            <span class="mt-3 sm:mt-0 status-badge ${statusColor}">
-                                <span class="lang lang-en">${status}</span>
-                                <span class="lang lang-ur urdu hidden urdu">${statusTextUrdu}</span>
-                            </span>
-                        </div>
-                    `;
-                    orderListEl.insertAdjacentHTML('beforeend', orderHtml);
-                });
-
-                applyCurrentLanguage();
-
-              })
-              .catch((error) => {
-                console.error("CRITICAL ERROR loading orders:", error);
-                orderListEl.innerHTML = `<p class="text-red-500 p-4 text-center">CRITICAL ERROR loading orders.</p>`;
-              });
-        }
-
-        function loadUserDeposits(userId) {
-            const depositListEl = document.getElementById('deposit-list');
-            if (!depositListEl) return;
-            
-            depositListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your deposits...</p>`;
-
-            db.collection('deposits')
-              .where('userId', '==', userId)
-              .orderBy('createdAt', 'desc')
-              .get()
-              .then((querySnapshot) => {
-                depositListEl.innerHTML = ''; 
-
-                if (querySnapshot.empty) {
-                    depositListEl.innerHTML = `<p class="p-4 bg-white rounded shadow text-center lang lang-en">No deposit requests found.</p><p class="p-4 bg-white rounded shadow text-center lang lang-ur urdu hidden urdu">کوئی ڈپازٹ درخواست نہیں ملی۔</p>`;
-                    applyCurrentLanguage(); 
-                    return;
-                }
-                
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    // ... (Deposit card generation logic remains the same)
-                    const status = data.status || 'Pending Review';
-                    const amount = parseFloat(data.amount || 0).toFixed(2);
-                    const method = data.method || 'N/A';
-                    const txId = data.txId || 'N/A';
-
-                    const statusColor = getUserStatusClass(status);
-
-                    let statusTextUrdu = '';
-                    if (status === 'Pending Review') statusTextUrdu = 'زیر جائزہ';
-                    else if (status === 'Approved') statusTextUrdu = 'منظور شدہ';
-                    else if (status === 'Rejected') statusTextUrdu = 'مسترد';
-
-                    const date = formatDate(data.createdAt);
-                    const isRejected = data.status === 'Rejected';
-
-                    const depositHtml = `
-                        <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-yellow-500">
-                            <div class="space-y-1 text-sm flex-grow">
-                                <p class="font-bold text-base text-blue-900 lang lang-en">Amount: $${amount}</p>
-                                <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">رقم: $${amount}</p>
-                                <p class="text-xs text-gray-600 lang lang-en">Method: ${method} | Date: ${date}</p>
-                                <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">طریقہ: ${method} | تاریخ: ${date}</p>
-                                <p class="text-xs text-gray-400 lang lang-en">TX ID/Ref: <span class="order-card-link">${txId}</span></p>
-                                ${isRejected && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
-                                ${isRejected && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
-                            </div>
-                            <span class="mt-3 sm:mt-0 status-badge ${statusColor}">
-                                <span class="lang lang-en">${status}</span>
-                                <span class="lang lang-ur urdu hidden urdu">${statusTextUrdu}</span>
-                            </span>
-                        </div>
-                    `;
-                    depositListEl.insertAdjacentHTML('beforeend', depositHtml);
-                });
-
-                applyCurrentLanguage();
-
-              })
-              .catch((error) => {
-                console.error("CRITICAL ERROR loading deposits:", error);
-                depositListEl.innerHTML = `<p class="text-red-500 p-4 text-center">CRITICAL ERROR loading deposits.</p>`;
-              });
-        }
-
-        // ------------------- DEPOSIT SUBMISSION LOGIC -------------------
-
-        const depositBtnSubmit = document.getElementById('deposit-btn-submit');
-        const depositBtnSubmitUr = document.getElementById('deposit-btn-submit-ur');
-        if (depositBtnSubmit) depositBtnSubmit.addEventListener('click', handleDepositSubmission);
-        if (depositBtnSubmitUr) depositBtnSubmitUr.addEventListener('click', handleDepositSubmission);
-
-        async function handleDepositSubmission() {
-            const user = auth.currentUser;
-            if (!user) return alert("Please log in to submit a deposit request.");
-
-            const amount = parseFloat(document.getElementById('deposit-amount').value);
-            const method = document.getElementById('deposit-method').value;
-            const txId = document.getElementById('deposit-tx-id').value;
-            const errorEl = document.getElementById('deposit-error');
-            
-            if (errorEl) errorEl.classList.add('hidden');
-
-            if (isNaN(amount) || amount < 1) {
-                if (errorEl) {
-                    errorEl.textContent = "Minimum deposit amount is $1.";
-                    errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-
-            if (!method || !txId) {
-                if (errorEl) {
-                    errorEl.textContent = "Please select a payment method and provide a Transaction ID/Reference.";
-                    errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-
-            try {
-                const userData = await loadUserProfile(user.uid);
-
-                await db.collection('deposits').add({
-                    userId: user.uid,
-                    userName: userData.name || user.email,
-                    amount: amount.toFixed(2),
-                    method: method,
-                    txId: txId,
-                    status: 'Pending Review', 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert("Deposit request submitted! Please allow 1-2 hours for manual verification and balance update.");
-                closeModal('deposit-modal');
-                loadUserDeposits(user.uid); 
-                
-                // Clear fields
-                if (document.getElementById('deposit-amount')) document.getElementById('deposit-amount').value = '';
-                if (document.getElementById('deposit-method')) document.getElementById('deposit-method').value = '';
-                if (document.getElementById('deposit-tx-id')) document.getElementById('deposit-tx-id').value = '';
-
-            } catch (error) {
-                console.error("Error during deposit submission:", error);
-                if (errorEl) {
-                    errorEl.textContent = "Submission failed due to a server error. Please try again.";
-                    errorEl.classList.remove('hidden');
-                }
-            }
-        }
-
-
-        // ------------------- TESTIMONIALS LOGIC -------------------
-
-        function renderStars(rating) {
-            let stars = '';
-            for (let i = 1; i <= 5; i++) {
-                const starClass = i <= rating ? 'fas fa-star text-yellow-400' : 'far fa-star text-gray-300';
-                stars += `<i class="${starClass}"></i>`;
-            }
-            return stars;
-        }
-
-        function createTestimonialCard(t) {
-            const name = t.name || t.userName || 'Anonymous User';
-            const comment = t.comment || 'No comment provided.';
-            const rating = t.rating || 5;
-            
-            const seed = t.userId || name; 
-            const initialColor = t.initialColor || generateColor(seed);
-
-            const initialAvatarHtml = createInitialAvatarHTML(name, seed, initialColor);
-
-            return `
-                <div class="bg-blue-50 hover:shadow-xl rounded-lg p-6 shadow">
-                    <div class="flex items-center mb-3">
-                        ${initialAvatarHtml}
-                        <span class="font-semibold lang lang-en">${name}</span>
-                        <span class="font-semibold lang lang-ur urdu hidden">${name}</span>
-                        <span class="ml-2">${renderStars(rating)}</span>
+            const orderHtml = `
+                <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-blue-500">
+                    <div class="space-y-1 text-sm flex-grow">
+                        <p class="font-bold text-base text-blue-900 lang lang-en">${service} (Qty: ${quantity})</p>
+                        <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">${service} (مقدار: ${quantity})</p>
+                        <p class="text-xs text-gray-600 lang lang-en">Cost: $${totalCost} | Ordered on: ${date}</p>
+                        <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">لاگت: $${totalCost} | تاریخ: ${date}</p>
+                        <p class="text-xs text-gray-400 lang lang-en">Link: <span class="order-card-link">${link}</span> (Ref: ${senderReference})</p>
+                        ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
+                        ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
                     </div>
-                    <p class="lang lang-en text-sm">${comment}</p>
-                    <p class="lang lang-ur urdu hidden urdu text-sm">${comment}</p>
+                    <span class="mt-3 sm:mt-0 status-badge ${statusColor}">
+                        <span class="lang lang-en">${status}</span>
+                        <span class="lang lang-ur urdu hidden urdu">${statusTextUrdu}</span>
+                    </span>
                 </div>
             `;
-        }
-
-        function loadMainTestimonials() {
-            const listEl = document.getElementById('testimonials-list-main');
-            if (!listEl) return;
-            
-            listEl.innerHTML = STATIC_TESTIMONIALS.slice(0, 4).map(t => createTestimonialCard(t)).join(''); 
-            
-            db.collection('testimonials').orderBy('createdAt', 'desc').limit(4).get()
-                .then(snapshot => {
-                    const reviewPromises = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const promise = db.collection('users').doc(data.userId).get().then(userDoc => {
-                            data.initialColor = userDoc.data() ? userDoc.data().initialColor : null;
-                            return data;
-                        }).catch(() => data);
-                        reviewPromises.push(promise);
-                    });
-                    
-                    Promise.all(reviewPromises).then(dynamicReviews => {
-                        let combinedHtml = dynamicReviews.map(t => createTestimonialCard(t)).join('');
-                        
-                        const staticRemaining = STATIC_TESTIMONIALS.slice(dynamicReviews.length > 0 ? 4 : 0, 10 - dynamicReviews.length);
-                        combinedHtml += staticRemaining.map(t => createTestimonialCard(t)).join('');
-                        
-                        listEl.innerHTML = combinedHtml;
-                        applyCurrentLanguage();
-                    });
-                })
-                .catch(error => {
-                    console.error("Error loading main dynamic testimonials:", error);
-                    listEl.innerHTML = STATIC_TESTIMONIALS.slice(0, 4).map(t => createTestimonialCard(t)).join('');
-                    applyCurrentLanguage();
-                });
-        }
-
-        function loadTestimonialsTab() {
-            const listEl = document.getElementById('testimonials-list');
-            const formContent = document.getElementById('review-form-tab-content');
-            
-            if (!listEl) return;
-
-            if (auth.currentUser) {
-                if (formContent) formContent.classList.remove('hidden');
-            } else {
-                if (formContent) formContent.classList.add('hidden');
-            }
-
-            listEl.innerHTML = `<p class="text-center w-full md:col-span-2 text-gray-500">Loading reviews...</p>`;
-
-            let allReviews = [...STATIC_TESTIMONIALS];
-            
-            db.collection('testimonials').orderBy('createdAt', 'desc').limit(50).get()
-                .then(snapshot => {
-                    const reviewPromises = [];
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const promise = db.collection('users').doc(data.userId).get().then(userDoc => {
-                            data.initialColor = userDoc.data() ? userDoc.data().initialColor : null;
-                            return data;
-                        }).catch(() => data);
-                        reviewPromises.push(promise);
-                    });
-                    
-                    Promise.all(reviewPromises).then(dynamicReviews => {
-                        dynamicReviews.forEach(review => allReviews.unshift(review));
-                        listEl.innerHTML = allReviews.map(t => createTestimonialCard(t)).join('');
-                        applyCurrentLanguage();
-                    });
-                })
-                .catch(error => {
-                    console.error("Error loading dashboard dynamic testimonials:", error);
-                    listEl.innerHTML = STATIC_TESTIMONIALS.map(t => createTestimonialCard(t)).join(''); 
-                    applyCurrentLanguage();
-                });
-        }
-
-        // Star Rating Interactivity (For the form)
-        document.querySelectorAll('#review-stars i').forEach(star => {
-            star.addEventListener('click', function() {
-                const rating = parseInt(this.dataset.value);
-                const reviewStarsEl = document.getElementById('review-stars');
-                const ratingValueDisplayEl = document.getElementById('rating-value-display');
-                
-                if (reviewStarsEl) reviewStarsEl.dataset.rating = rating;
-                if (ratingValueDisplayEl) ratingValueDisplayEl.textContent = `${rating} / 5`;
-                
-                document.querySelectorAll('#review-stars i').forEach(s => {
-                    const sValue = parseInt(s.dataset.value);
-                    s.classList.remove('fas', 'far');
-                    s.classList.add(sValue <= rating ? 'fas' : 'far');
-                });
-            });
+            orderListEl.insertAdjacentHTML('beforeend', orderHtml);
         });
 
-        // Submit Review Logic
-        const submitReviewBtn = document.getElementById('submit-review-btn');
-        const submitReviewBtnUr = document.getElementById('submit-review-btn-ur');
-        if (submitReviewBtn) submitReviewBtn.addEventListener('click', handleSubmitReview);
-        if (submitReviewBtnUr) submitReviewBtnUr.addEventListener('click', handleSubmitReview);
+        applyCurrentLanguage();
 
-        async function handleSubmitReview() {
-            const user = auth.currentUser;
-            if (!user) return alert("Please log in to submit a review.");
-            
-            const nameEl = document.getElementById('review-name');
-            const commentEl = document.getElementById('review-comment');
-            const reviewStarsEl = document.getElementById('review-stars');
-            
-            const name = nameEl ? nameEl.value : '';
-            const comment = commentEl ? commentEl.value : '';
-            const rating = reviewStarsEl ? parseInt(reviewStarsEl.dataset.rating) : 0;
-            
-            if (!name || !comment || rating === 0) return alert("Please fill out your name, comment, and select a rating.");
+      })
+      .catch((error) => {
+        console.error("CRITICAL ERROR loading orders:", error);
+        orderListEl.innerHTML = `<p class="text-red-500 p-4 text-center">CRITICAL ERROR loading orders.</p>`;
+      });
+}
 
-            try {
-                await db.collection('testimonials').add({
-                    userId: user.uid,
-                    userName: name,
-                    comment: comment,
-                    rating: rating,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                });
+function loadUserDeposits(userId) {
+    const depositListEl = document.getElementById('deposit-list');
+    depositListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your deposits...</p>`;
 
-                alert("Review submitted successfully! Thank you.");
-                loadTestimonialsTab(); 
-                loadMainTestimonials(); 
-                
-                // Reset form
-                if (commentEl) commentEl.value = '';
-                if (reviewStarsEl) reviewStarsEl.dataset.rating = 0;
-                const ratingValueDisplayEl = document.getElementById('rating-value-display');
-                if (ratingValueDisplayEl) ratingValueDisplayEl.textContent = '0 / 5';
-                document.querySelectorAll('#review-stars i').forEach(s => {
-                    s.classList.remove('fas');
-                    s.classList.add('far');
-                });
+    db.collection('deposits')
+      .where('userId', '==', userId)
+      .orderBy('createdAt', 'desc')
+      .get()
+      .then((querySnapshot) => {
+        depositListEl.innerHTML = ''; 
 
-            } catch (error) {
-                console.error("Error submitting review:", error);
-                alert("Failed to submit review. Check console.");
-            }
+        if (querySnapshot.empty) {
+            depositListEl.innerHTML = `<p class="p-4 bg-white rounded shadow text-center lang lang-en">No deposit requests found.</p><p class="p-4 bg-white rounded shadow text-center lang lang-ur urdu hidden urdu">کوئی ڈپازٹ درخواست نہیں ملی۔</p>`;
+            applyCurrentLanguage(); 
+            return;
         }
 
+        querySnapshot.forEach((doc) => {
+            const data = doc.data();
 
-        // ------------------- SERVICE SELECTION & ORDERING LOGIC -------------------
+            const status = data.status || 'Pending Review';
+            const amount = parseFloat(data.amount || 0).toFixed(2);
+            const method = data.method || 'N/A';
+            const txId = data.txId || 'N/A';
 
-        function openServiceSelectModal(platformEn, platformUr) {
-            const user = auth.currentUser;
-            if (!user) {
-                alert("Please log in or sign up to place an order.");
-                openModal('login-modal');
-                return;
-            }
+            const statusColor = getUserStatusClass(status);
+
+            let statusTextUrdu = '';
+            if (status === 'Pending Review') statusTextUrdu = 'زیر جائزہ';
+            else if (status === 'Approved') statusTextUrdu = 'منظور شدہ';
+            else if (status === 'Rejected') statusTextUrdu = 'مسترد';
+
+            const date = formatDate(data.createdAt);
+            const isRejected = data.status === 'Rejected';
+
+            const depositHtml = `
+                <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-yellow-500">
+                    <div class="space-y-1 text-sm flex-grow">
+                        <p class="font-bold text-base text-blue-900 lang lang-en">Amount: $${amount}</p>
+                        <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">رقم: $${amount}</p>
+                        <p class="text-xs text-gray-600 lang lang-en">Method: ${method} | Date: ${date}</p>
+                        <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">طریقہ: ${method} | تاریخ: ${date}</p>
+                        <p class="text-xs text-gray-400 lang lang-en">TX ID/Ref: <span class="order-card-link">${txId}</span></p>
+                        ${isRejected && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
+                        ${isRejected && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
+                    </div>
+                    <span class="mt-3 sm:mt-0 status-badge ${statusColor}">
+                        <span class="lang lang-en">${status}</span>
+                        <span class="lang lang-ur urdu hidden urdu">${statusTextUrdu}</span>
+                    </span>
+                </div>
+            `;
+            depositListEl.insertAdjacentHTML('beforeend', depositHtml);
+        });
+
+        applyCurrentLanguage();
+
+      })
+      .catch((error) => {
+        console.error("CRITICAL ERROR loading deposits:", error);
+        depositListEl.innerHTML = `<p class="text-red-500 p-4 text-center">CRITICAL ERROR loading deposits.</p>`;
+      });
+}
+
+// ------------------- DEPOSIT SUBMISSION LOGIC -------------------
+
+document.getElementById('deposit-btn-submit').addEventListener('click', handleDepositSubmission);
+document.getElementById('deposit-btn-submit-ur').addEventListener('click', handleDepositSubmission);
+
+async function handleDepositSubmission() {
+    const user = auth.currentUser;
+    if (!user) return alert("Please log in to submit a deposit request.");
+
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    const method = document.getElementById('deposit-method').value;
+    const txId = document.getElementById('deposit-tx-id').value;
+    const errorEl = document.getElementById('deposit-error');
+    errorEl.classList.add('hidden');
+
+    if (isNaN(amount) || amount < 1) {
+        errorEl.textContent = "Minimum deposit amount is $1.";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    if (!method || !txId) {
+        errorEl.textContent = "Please select a payment method and provide a Transaction ID/Reference.";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const userData = await loadUserProfile(user.uid);
+
+        await db.collection('deposits').add({
+            userId: user.uid,
+            userName: userData.name || user.email,
+            amount: amount.toFixed(2),
+            method: method,
+            txId: txId,
+            status: 'Pending Review', 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Deposit request submitted! Please allow 1-2 hours for manual verification and balance update.");
+        closeModal('deposit-modal');
+        loadUserDeposits(user.uid); 
+        
+        // Clear fields
+        document.getElementById('deposit-amount').value = '';
+        document.getElementById('deposit-method').value = '';
+        document.getElementById('deposit-tx-id').value = '';
+
+    } catch (error) {
+        console.error("Error during deposit submission:", error);
+        errorEl.textContent = "Submission failed due to a server error. Please try again.";
+        errorEl.classList.remove('hidden');
+    }
+}
+
+
+// ------------------- TESTIMONIALS LOGIC -------------------
+
+function renderStars(rating) {
+    let stars = '';
+    for (let i = 1; i <= 5; i++) {
+        const starClass = i <= rating ? 'fas fa-star text-yellow-400' : 'far fa-star text-gray-300';
+        stars += `<i class="${starClass}"></i>`;
+    }
+    return stars;
+}
+
+function createTestimonialCard(t) {
+    const name = t.name || t.userName || 'Anonymous User';
+    const comment = t.comment || 'No comment provided.';
+    const rating = t.rating || 5;
+    
+    const seed = t.userId || name; 
+    const initialColor = t.initialColor || generateColor(seed);
+
+    const initialAvatarHtml = createInitialAvatarHTML(name, seed, initialColor);
+
+    return `
+        <div class="bg-blue-50 hover:shadow-xl rounded-lg p-6 shadow">
+            <div class="flex items-center mb-3">
+                ${initialAvatarHtml}
+                <span class="font-semibold lang lang-en">${name}</span>
+                <span class="font-semibold lang lang-ur urdu hidden">${name}</span>
+                <span class="ml-2">${renderStars(rating)}</span>
+            </div>
+            <p class="lang lang-en text-sm">${comment}</p>
+            <p class="lang lang-ur urdu hidden urdu text-sm">${comment}</p>
+        </div>
+    `;
+}
+
+function loadMainTestimonials() {
+    const listEl = document.getElementById('testimonials-list-main');
+    if (!listEl) return;
+    
+    listEl.innerHTML = STATIC_TESTIMONIALS.slice(0, 4).map(t => createTestimonialCard(t)).join(''); 
+    
+    db.collection('testimonials').orderBy('createdAt', 'desc').limit(4).get()
+        .then(snapshot => {
+            const reviewPromises = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const promise = db.collection('users').doc(data.userId).get().then(userDoc => {
+                    data.initialColor = userDoc.data() ? userDoc.data().initialColor : null;
+                    return data;
+                }).catch(() => data);
+                reviewPromises.push(promise);
+            });
             
-            if (Object.keys(SERVICE_DATA_PRICES).length === 0) {
-                alert("Pricing data is still loading. Please wait a moment.");
-                return;
-            }
-
-            const platformDisplayEn = document.getElementById('selected-platform-display-en');
-            const platformDisplayUr = document.getElementById('selected-platform-display-ur');
-            if (platformDisplayEn) platformDisplayEn.textContent = platformEn;
-            if (platformDisplayUr) platformDisplayUr.textContent = platformUr;
-
-
-            const container = document.getElementById('service-options-container');
-            if (!container) return;
-            
-            container.innerHTML = ''; 
-            
-            const services = SERVICE_DATA[platformEn].services;
-            
-            for (const serviceNameEn in services) {
-                const price = getPriceForService(platformEn, serviceNameEn);
-                const data = services[serviceNameEn];
+            Promise.all(reviewPromises).then(dynamicReviews => {
+                let combinedHtml = dynamicReviews.map(t => createTestimonialCard(t)).join('');
                 
-                // Display the price with 5 decimal places since it's so small
-                const priceDisplay = price.toFixed(5);
-
-                const buttonHtml = `
-                    <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${price})" 
-                            class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 font-semibold text-left transition duration-150">
-                        <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">($${priceDisplay}/1k)</span></span>
-                        <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">($${priceDisplay}/1k)</span></span>
-                    </button>
-                `;
-                container.insertAdjacentHTML('beforeend', buttonHtml);
-            }
-            
+                const staticRemaining = STATIC_TESTIMONIALS.slice(dynamicReviews.length > 0 ? 4 : 0, 10 - dynamicReviews.length);
+                combinedHtml += staticRemaining.map(t => createTestimonialCard(t)).join('');
+                
+                listEl.innerHTML = combinedHtml;
+                applyCurrentLanguage();
+            });
+        })
+        .catch(error => {
+            console.error("Error loading main dynamic testimonials:", error);
+            listEl.innerHTML = STATIC_TESTIMONIALS.slice(0, 4).map(t => createTestimonialCard(t)).join('');
             applyCurrentLanguage();
+        });
+}
 
-            openModal('service-select-modal');
-        }
+function loadTestimonialsTab() {
+    const listEl = document.getElementById('testimonials-list');
+    const formContent = document.getElementById('review-form-tab-content');
+    
+    if (auth.currentUser) {
+        formContent.classList.remove('hidden');
+    } else {
+        formContent.classList.add('hidden');
+    }
 
-        function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, price) {
+    listEl.innerHTML = `<p class="text-center w-full md:col-span-2 text-gray-500">Loading reviews...</p>`;
+
+    let allReviews = [...STATIC_TESTIMONIALS];
+    
+    db.collection('testimonials').orderBy('createdAt', 'desc').limit(50).get()
+        .then(snapshot => {
+            const reviewPromises = [];
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const promise = db.collection('users').doc(data.userId).get().then(userDoc => {
+                    data.initialColor = userDoc.data() ? userDoc.data().initialColor : null;
+                    return data;
+                }).catch(() => data);
+                reviewPromises.push(promise);
+            });
             
-            closeModal('service-select-modal'); 
-
-            if (document.getElementById('order-service-name')) document.getElementById('order-service-name').value = `${platformEn} ${serviceEn}`;
-            if (document.getElementById('order-service-price')) document.getElementById('order-service-price').value = price;
-            
-            if (document.getElementById('order-platform-display')) document.getElementById('order-platform-display').textContent = platformEn;
-            if (document.getElementById('order-platform-display-ur')) document.getElementById('order-platform-display-ur').textContent = platformUr;
-            if (document.getElementById('order-service-display')) document.getElementById('order-service-display').textContent = serviceEn;
-            if (document.getElementById('order-service-display-ur')) document.getElementById('order-service-display-ur').textContent = serviceUr;
-
-            if (document.getElementById('order-link')) document.getElementById('order-link').value = '';
-            if (document.getElementById('order-sender-ref')) document.getElementById('order-sender-ref').value = ''; 
-            if (document.getElementById('order-quantity')) document.getElementById('order-quantity').value = 1; 
-            
-            const initialCost = (1 * price).toFixed(2); // Display cost rounded to 2 decimals for currency
-            if (document.getElementById('order-total-cost')) document.getElementById('order-total-cost').textContent = `$${initialCost}`;
-            if (document.getElementById('order-total-cost-ur')) document.getElementById('order-total-cost-ur').textContent = `$${initialCost}`;
-            
-            const orderErrorEl = document.getElementById('order-error');
-            if (orderErrorEl) orderErrorEl.classList.add('hidden');
-
+            Promise.all(reviewPromises).then(dynamicReviews => {
+                dynamicReviews.forEach(review => allReviews.unshift(review));
+                listEl.innerHTML = allReviews.map(t => createTestimonialCard(t)).join('');
+                applyCurrentLanguage();
+            });
+        })
+        .catch(error => {
+            console.error("Error loading dashboard dynamic testimonials:", error);
+            listEl.innerHTML = STATIC_TESTIMONIALS.map(t => createTestimonialCard(t)).join(''); 
             applyCurrentLanguage();
+        });
+}
 
-            openModal('order-modal');
-        }
+// Star Rating Interactivity (For the form)
+document.querySelectorAll('#review-stars i').forEach(star => {
+    star.addEventListener('click', function() {
+        const rating = parseInt(this.dataset.value);
+        document.getElementById('review-stars').dataset.rating = rating;
+        document.getElementById('rating-value-display').textContent = `${rating} / 5`;
+        
+        document.querySelectorAll('#review-stars i').forEach(s => {
+            const sValue = parseInt(s.dataset.value);
+            s.classList.remove('fas', 'far');
+            s.classList.add(sValue <= rating ? 'fas' : 'far');
+        });
+    });
+});
 
-        const orderQuantityEl = document.getElementById('order-quantity');
-        if (orderQuantityEl) orderQuantityEl.addEventListener('input', updateOrderCost);
+// Submit Review Logic
+document.getElementById('submit-review-btn').addEventListener('click', handleSubmitReview);
+document.getElementById('submit-review-btn-ur').addEventListener('click', handleSubmitReview);
 
-        function updateOrderCost() {
-            const quantityInput = document.getElementById('order-quantity');
-            const priceEl = document.getElementById('order-service-price');
-            const costEl = document.getElementById('order-total-cost');
-            const costUrEl = document.getElementById('order-total-cost-ur');
+async function handleSubmitReview() {
+    const user = auth.currentUser;
+    if (!user) return alert("Please log in to submit a review.");
+    
+    const name = document.getElementById('review-name').value;
+    const comment = document.getElementById('review-comment').value;
+    const rating = parseInt(document.getElementById('review-stars').dataset.rating);
+    
+    if (!name || !comment || rating === 0) return alert("Please fill out your name, comment, and select a rating.");
 
-            if (!quantityInput || !priceEl || !costEl || !costUrEl) return;
-            
-            const pricePerK = parseFloat(priceEl.value);
-            let quantity = parseInt(quantityInput.value);
+    try {
+        await db.collection('testimonials').add({
+            userId: user.uid,
+            userName: name,
+            comment: comment,
+            rating: rating,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        });
 
-            if (quantity < 1 || isNaN(quantity)) {
-                quantity = 1;
-                quantityInput.value = 1;
-            }
+        alert("Review submitted successfully! Thank you.");
+        loadTestimonialsTab(); 
+        loadMainTestimonials(); 
+        
+        // Reset form
+        document.getElementById('review-comment').value = '';
+        document.getElementById('review-stars').dataset.rating = 0;
+        document.getElementById('rating-value-display').textContent = '0 / 5';
+        document.querySelectorAll('#review-stars i').forEach(s => {
+            s.classList.remove('fas');
+            s.classList.add('far');
+        });
 
-            // Calculate cost, then round to 2 decimals for display
-            const cost = (quantity * pricePerK);
-            costEl.textContent = `$${cost.toFixed(2)}`;
-            costUrEl.textContent = `$${cost.toFixed(2)}`;
-        }
+    } catch (error) {
+        console.error("Error submitting review:", error);
+        alert("Failed to submit review. Check console.");
+    }
+}
 
-        const orderBtnSubmit = document.getElementById('order-btn-submit');
-        const orderBtnSubmitUr = document.getElementById('order-btn-submit-ur');
-        if (orderBtnSubmit) orderBtnSubmit.addEventListener('click', handleOrderSubmission);
-        if (orderBtnSubmitUr) orderBtnSubmitUr.addEventListener('click', handleOrderSubmission);
 
-        async function handleOrderSubmission() {
-            const user = auth.currentUser;
-            if (!user) return;
-            
-            const serviceName = document.getElementById('order-service-name').value;
-            const pricePerK = parseFloat(document.getElementById('order-service-price').value);
-            const link = document.getElementById('order-link').value;
-            const senderRef = document.getElementById('order-sender-ref').value; 
-            const quantityK = parseInt(document.getElementById('order-quantity').value); 
-            
-            const errorEl = document.getElementById('order-error');
-            if (errorEl) errorEl.classList.add('hidden');
+// ------------------- SERVICE SELECTION & ORDERING LOGIC -------------------
 
-            if (!link || quantityK < 1) {
-                if (errorEl) {
-                    errorEl.textContent = "Please provide a valid link and quantity (min 1k).";
-                    errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-            
-            const totalCost = quantityK * pricePerK;
-            const finalQuantity = quantityK * 1000;
+function openServiceSelectModal(platformEn, platformUr) {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please log in or sign up to place an order.");
+        openModal('login-modal');
+        return;
+    }
+    
+    // Ensure pricing data is loaded before allowing service selection
+    if (Object.keys(SERVICE_DATA_PRICES).length === 0) {
+        alert("Pricing data is still loading. Please wait a moment.");
+        return;
+    }
 
-            const userData = await loadUserProfile(user.uid);
-            const currentBalance = parseFloat(userData.balance || 0);
+    document.getElementById('selected-platform-display-en').textContent = platformEn;
+    document.getElementById('selected-platform-display-ur').textContent = platformUr;
 
-            if (currentBalance < totalCost) {
-                if (errorEl) {
-                    errorEl.textContent = `Insufficient balance. Please deposit funds. Need $${totalCost.toFixed(2)}, available $${currentBalance.toFixed(2)}.`;
-                    errorEl.classList.remove('hidden');
-                }
+    const container = document.getElementById('service-options-container');
+    container.innerHTML = ''; 
+    
+    const services = SERVICE_DATA[platformEn].services;
+    
+    for (const serviceNameEn in services) {
+        const price = getPriceForService(platformEn, serviceNameEn);
+        const data = services[serviceNameEn];
+        
+        const buttonHtml = `
+            <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${price})" 
+                    class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 font-semibold text-left transition duration-150">
+                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">($${price.toFixed(2)}/1k)</span></span>
+                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">($${price.toFixed(2)}/1k)</span></span>
+            </button>
+        `;
+        container.insertAdjacentHTML('beforeend', buttonHtml);
+    }
+    
+    applyCurrentLanguage();
+
+    openModal('service-select-modal');
+}
+
+function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, price) {
+    
+    closeModal('service-select-modal'); 
+
+    document.getElementById('order-service-name').value = `${platformEn} ${serviceEn}`;
+    document.getElementById('order-service-price').value = price;
+    
+    document.getElementById('order-platform-display').textContent = platformEn;
+    document.getElementById('order-platform-display-ur').textContent = platformUr;
+    document.getElementById('order-service-display').textContent = serviceEn;
+    document.getElementById('order-service-display-ur').textContent = serviceUr;
+
+    document.getElementById('order-link').value = '';
+    document.getElementById('order-sender-ref').value = ''; 
+    document.getElementById('order-quantity').value = 1; 
+    
+    const initialCost = (1 * price).toFixed(2);
+    document.getElementById('order-total-cost').textContent = `$${initialCost}`;
+    document.getElementById('order-total-cost-ur').textContent = `$${initialCost}`;
+    document.getElementById('order-error').classList.add('hidden');
+
+    applyCurrentLanguage();
+
+    openModal('order-modal');
+}
+
+document.getElementById('order-quantity').addEventListener('input', updateOrderCost);
+
+function updateOrderCost() {
+    const quantityInput = document.getElementById('order-quantity');
+    const pricePerK = parseFloat(document.getElementById('order-service-price').value);
+    let quantity = parseInt(quantityInput.value);
+
+    if (quantity < 1 || isNaN(quantity)) {
+        quantity = 1;
+        quantityInput.value = 1;
+    }
+
+    const cost = (quantity * pricePerK).toFixed(2);
+    document.getElementById('order-total-cost').textContent = `$${cost}`;
+    document.getElementById('order-total-cost-ur').textContent = `$${cost}`;
+}
+
+document.getElementById('order-btn-submit').addEventListener('click', handleOrderSubmission);
+document.getElementById('order-btn-submit-ur').addEventListener('click', handleOrderSubmission);
+
+async function handleOrderSubmission() {
+    const user = auth.currentUser;
+    if (!user) return;
+    
+    const serviceName = document.getElementById('order-service-name').value;
+    const pricePerK = parseFloat(document.getElementById('order-service-price').value);
+    const link = document.getElementById('order-link').value;
+    const senderRef = document.getElementById('order-sender-ref').value; 
+    const quantityK = parseInt(document.getElementById('order-quantity').value); 
+    
+    const errorEl = document.getElementById('order-error');
+    errorEl.classList.add('hidden');
+
+    if (!link || quantityK < 1) {
+        errorEl.textContent = "Please provide a valid link and quantity (min 1k).";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+    
+    const totalCost = quantityK * pricePerK; // Calculate total cost based on quantity (in thousands)
+    const finalQuantity = quantityK * 1000; // Store actual number of items
+
+    const userData = await loadUserProfile(user.uid);
+    const currentBalance = parseFloat(userData.balance || 0);
+
+    if (currentBalance < totalCost) {
+        errorEl.textContent = `Insufficient balance. Please deposit funds. Need $${totalCost.toFixed(2)}, available $${currentBalance.toFixed(2)}.`;
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const newBalance = currentBalance - totalCost;
+        
+        // Deduct balance
+        await db.collection('users').doc(user.uid).update({
+            balance: newBalance.toFixed(2)
+        });
+
+        // Create Order
+        await db.collection('orders').add({
+            userId: user.uid,
+            userName: userData.name || user.email,
+            service: serviceName,
+            link: link,
+            senderReference: senderRef, 
+            quantity: finalQuantity,
+            totalCost: totalCost.toFixed(2),
+            status: 'Pending', 
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert(`Order placed successfully! New balance: $${newBalance.toFixed(2)}`);
+        closeModal('order-modal');
+        loadUserProfile(user.uid); 
+        loadUserOrders(user.uid); 
+
+    } catch (error) {
+        console.error("Error during order transaction:", error);
+        errorEl.textContent = "Order failed due to a server error. Please retry.";
+        errorEl.classList.remove('hidden');
+    }
+}
+
+
+// ------------------- AUTHENTICATION LOGIC -------------------
+
+document.getElementById('signup-btn-submit').addEventListener('click', handleSignup);
+document.getElementById('signup-btn-submit-ur').addEventListener('click', handleSignup); 
+
+async function handleSignup() {
+    const name = document.getElementById('signup-name').value;
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+    const gender = document.getElementById('signup-gender').value; // Get Gender
+    const errorEl = document.getElementById('signup-error');
+    errorEl.classList.add('hidden');
+
+    if (!email || !password || !name || !gender) {
+        errorEl.textContent = "Please fill all fields, including Gender.";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+        
+        // Generate unique color based on UID/Gender combination
+        const colorSeed = user.uid + gender;
+        const avatarColor = generateColor(colorSeed); 
+
+        await db.collection('users').doc(user.uid).set({
+            name: name,
+            email: email,
+            gender: gender, 
+            balance: '0.00', 
+            initialColor: avatarColor, // Store the generated initial color
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Signup successful! Welcome.");
+        closeModal('signup-modal');
+
+    } catch (error) {
+        errorEl.textContent = `Error: ${error.message}`;
+        errorEl.classList.remove('hidden');
+        console.error("Signup Error:", error);
+    }
+}
+
+document.getElementById('login-btn-submit').addEventListener('click', handleLogin);
+document.getElementById('login-btn-submit-ur').addEventListener('click', handleLogin);
+
+async function handleLogin() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorEl = document.getElementById('login-error');
+    errorEl.classList.add('hidden');
+
+    try {
+        await auth.signInWithEmailAndPassword(email, password);
+        alert("Login successful!");
+        closeModal('login-modal');
+    } catch (error) {
+        errorEl.textContent = `Error: ${error.message}`;
+        errorEl.classList.remove('hidden');
+        console.error("Login Error:", error);
+    }
+}
+
+function handleLogout() {
+    auth.signOut().then(() => {
+        alert("Logged out successfully.");
+    }).catch((error) => {
+        console.error("Logout Error:", error);
+    });
+}
+
+function updateMobileMenuVisibility(user) {
+    const dashboardLinks = document.getElementById('mobile-menu-dashboard-links');
+    if (user) {
+        dashboardLinks.classList.remove('hidden');
+    } else {
+        dashboardLinks.classList.add('hidden');
+    }
+}
+
+auth.onAuthStateChanged((user) => {
+    const authButtons = document.getElementById('auth-buttons');
+    const dashboardSection = document.getElementById('user-dashboard');
+    
+    authButtons.innerHTML = '';
+
+    updateMobileMenuVisibility(user);
+
+    if (user) {
+        const dashboardButtonEn = `<button onclick="scrollToDashboard()" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en hidden md:inline-block">Dashboard</button>`;
+        const logoutButtonEn = `<button onclick="handleLogout()" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-en">Logout</button>`;
+        const dashboardButtonUr = `<button onclick="scrollToDashboard()" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-ur urdu hidden md:inline-block">ڈیش بورڈ</button>`;
+        const logoutButtonUr = `<button onclick="handleLogout()" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-ur urdu hidden">لاگ آؤٹ</button>`;
+        
+        authButtons.innerHTML = dashboardButtonEn + logoutButtonEn + dashboardButtonUr + logoutButtonUr;
+
+        dashboardSection.classList.remove('hidden');
+        
+        loadUserProfile(user.uid).then(userData => {
+            document.getElementById('review-name').value = userData.name || user.email.split('@')[0];
+        }); 
+        
+        showDashboardTab('orders'); 
+        
+    } else {
+        const loginButtonEn = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en">Login</button>`;
+        const signupButtonEn = `<button onclick="openModal('signup-modal')" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-en">Sign Up</button>`;
+        const loginButtonUr = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-ur urdu hidden">لاگ ان کریں</button>`;
+        const signupButtonUr = `<button onclick="openModal('signup-modal')" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-ur urdu hidden">سائن اپ</button>`;
+
+        authButtons.innerHTML = loginButtonEn + signupButtonEn + loginButtonUr + signupButtonUr;
+        dashboardSection.classList.add('hidden');
+    }
+
+    applyCurrentLanguage();
+});
+
+
+// ------------------- CONTACT FORM SUBMISSION -------------------
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            const statusEl = document.getElementById('contact-form-status');
+            const submitBtn = document.getElementById('contact-submit-btn');
+
+            statusEl.classList.remove('hidden', 'text-green-500', 'text-red-500');
+            statusEl.textContent = 'Sending message...';
+            submitBtn.disabled = true; // Disable button to prevent multiple submissions
+
+            if (!name || !email || !message) {
+                statusEl.textContent = 'Please fill in all fields.';
+                statusEl.classList.add('text-red-500');
+                statusEl.classList.remove('hidden');
+                submitBtn.disabled = false;
                 return;
             }
 
             try {
-                const newBalance = currentBalance - totalCost;
-                
-                // Deduct balance
-                await db.collection('users').doc(user.uid).update({
-                    balance: newBalance.toFixed(2)
-                });
-
-                // Create Order
-                await db.collection('orders').add({
-                    userId: user.uid,
-                    userName: userData.name || user.email,
-                    service: serviceName,
-                    link: link,
-                    senderReference: senderRef, 
-                    quantity: finalQuantity,
-                    totalCost: totalCost.toFixed(2),
-                    status: 'Pending', 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                alert(`Order placed successfully! New balance: $${newBalance.toFixed(2)}`);
-                closeModal('order-modal');
-                loadUserProfile(user.uid); 
-                loadUserOrders(user.uid); 
-
-            } catch (error) {
-                console.error("Error during order transaction:", error);
-                if (errorEl) {
-                    errorEl.textContent = "Order failed due to a server error. Please retry.";
-                    errorEl.classList.remove('hidden');
-                }
-            }
-        }
-
-
-        // ------------------- AUTHENTICATION LOGIC -------------------
-
-        const signupBtnSubmit = document.getElementById('signup-btn-submit');
-        const signupBtnSubmitUr = document.getElementById('signup-btn-submit-ur'); 
-        if (signupBtnSubmit) signupBtnSubmit.addEventListener('click', handleSignup);
-        if (signupBtnSubmitUr) signupBtnSubmitUr.addEventListener('click', handleSignup); 
-
-        async function handleSignup() {
-            const name = document.getElementById('signup-name').value;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const gender = document.getElementById('signup-gender').value; 
-            const errorEl = document.getElementById('signup-error');
-            
-            if (errorEl) errorEl.classList.add('hidden');
-
-            if (!email || !password || !name || !gender) {
-                if (errorEl) {
-                    errorEl.textContent = "Please fill all fields, including Gender.";
-                    errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-
-            try {
-                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                const user = userCredential.user;
-                
-                const colorSeed = user.uid + gender;
-                const avatarColor = generateColor(colorSeed); 
-
-                await db.collection('users').doc(user.uid).set({
+                await db.collection('contactMessages').add({
                     name: name,
                     email: email,
-                    gender: gender, 
-                    balance: '0.00', 
-                    initialColor: avatarColor, 
+                    message: message,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                alert("Signup successful! Welcome.");
-                closeModal('signup-modal');
-
+                statusEl.textContent = 'Message sent successfully! We will get back to you soon.';
+                statusEl.classList.add('text-green-500');
+                statusEl.classList.remove('hidden');
+                contactForm.reset(); // Clear the form
             } catch (error) {
-                if (errorEl) {
-                    errorEl.textContent = `Error: ${error.message}`;
-                    errorEl.classList.remove('hidden');
-                }
-                console.error("Signup Error:", error);
+                console.error("Error sending message:", error);
+                statusEl.textContent = `Failed to send message: ${error.message}`;
+                statusEl.classList.add('text-red-500');
+                statusEl.classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false; // Re-enable button
             }
-        }
+        });
+    }
+});
 
-        const loginBtnSubmit = document.getElementById('login-btn-submit');
-        const loginBtnSubmitUr = document.getElementById('login-btn-submit-ur');
-        if (loginBtnSubmit) loginBtnSubmit.addEventListener('click', handleLogin);
-        if (loginBtnSubmitUr) loginBtnSubmitUr.addEventListener('click', handleLogin);
 
-        async function handleLogin() {
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const errorEl = document.getElementById('login-error');
-            if (errorEl) errorEl.classList.add('hidden');
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-                alert("Login successful!");
-                closeModal('login-modal');
-            } catch (error) {
-                if (errorEl) {
-                    errorEl.textContent = `Error: ${error.message}`;
-                    errorEl.classList.remove('hidden');
+// Chart initialization and initial loads
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Load Prices first (real-time listener)
+    loadServicePrices().then(() => {
+        
+        // 2. Initialize Chart
+        let chartElement = document.getElementById('statsChart');
+        if (chartElement) {
+            let chart = chartElement.getContext('2d');
+            new Chart(chart, {
+                type: 'bar',
+                data: {
+                    labels: ['TikTok', 'Instagram', 'YouTube', 'Facebook'],
+                    datasets: [{
+                        label: 'Orders (in thousands)',
+                        data: [17, 12, 7, 4],
+                        backgroundColor: ['#F472B6','#FB7185','#F87171','#60A5FA'],
+                    }]
+                },
+                options: {
+                    plugins: { legend: {display: false} },
+                    scales: {y: {beginAtZero: true, ticks: {stepSize: 2}}}
                 }
-                console.error("Login Error:", error);
-            }
-        }
-
-        function handleLogout() {
-            auth.signOut().then(() => {
-                alert("Logged out successfully.");
-            }).catch((error) => {
-                console.error("Logout Error:", error);
             });
         }
-
-        function updateMobileMenuVisibility(user) {
-            const dashboardLinks = document.getElementById('mobile-menu-dashboard-links');
-            if (dashboardLinks) {
-                if (user) {
-                    dashboardLinks.classList.remove('hidden');
-                } else {
-                    dashboardLinks.classList.add('hidden');
-                }
-            }
-        }
-
-        auth.onAuthStateChanged((user) => {
-            const authButtons = document.getElementById('auth-buttons');
-            const dashboardSection = document.getElementById('user-dashboard');
-            
-            if (authButtons) authButtons.innerHTML = '';
-
+        
+        // 3. Final setup
+        // No direct check for 'active' class on lang buttons, rely on `currentLanguage`
+        applyCurrentLanguage();
+        
+        loadMainTestimonials(); 
+        
+        // Listen to auth state changes for dashboard visibility
+        auth.onAuthStateChanged(user => {
             updateMobileMenuVisibility(user);
-
             if (user) {
-                const dashboardButtonEn = `<button onclick="scrollToDashboard()" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en hidden md:inline-block">Dashboard</button>`;
-                const logoutButtonEn = `<button onclick="handleLogout()" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-en">Logout</button>`;
-                const dashboardButtonUr = `<button onclick="scrollToDashboard()" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-ur urdu hidden md:inline-block">ڈیش بورڈ</button>`;
-                const logoutButtonUr = `<button onclick="handleLogout()" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-ur urdu hidden">لاگ آؤٹ</button>`;
-                
-                if (authButtons) authButtons.innerHTML = dashboardButtonEn + logoutButtonEn + dashboardButtonUr + logoutButtonUr;
-
-                if (dashboardSection) dashboardSection.classList.remove('hidden');
-                
-                loadUserProfile(user.uid).then(userData => {
-                    const reviewNameEl = document.getElementById('review-name');
-                    if(reviewNameEl) reviewNameEl.value = userData.name || user.email.split('@')[0];
-                }); 
-                
-                showDashboardTab('orders'); 
-                
-            } else {
-                const loginButtonEn = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en">Login</button>`;
-                const signupButtonEn = `<button onclick="openModal('signup-modal')" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-en">Sign Up</button>`;
-                const loginButtonUr = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-ur urdu hidden">لاگ ان کریں</button>`;
-                const signupButtonUr = `<button onclick="openModal('signup-modal')" class="bg-yellow-400 text-blue-900 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-yellow-300 lang lang-ur urdu hidden">سائن اپ</button>`;
-
-                if (authButtons) authButtons.innerHTML = loginButtonEn + signupButtonEn + loginButtonUr + signupButtonUr;
-                if (dashboardSection) dashboardSection.classList.add('hidden');
-            }
-
-            applyCurrentLanguage();
-        });
-
-
-        // ===============================================
-        // == ADMIN PANEL LOGIC ==
-        // ===============================================
-
-        const adminLoginBtn = document.getElementById('admin-login-btn');
-        if(adminLoginBtn) adminLoginBtn.addEventListener('click', async () => {
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
-            const errorEl = document.getElementById('admin-login-error');
-            if (errorEl) errorEl.classList.add('hidden');
-            
-            if (email !== ADMIN_EMAIL) {
-                if (errorEl) {
-                    errorEl.textContent = "Invalid Admin Email.";
-                    errorEl.classList.remove('hidden');
-                }
-                return;
-            }
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (error) {
-                if (errorEl) {
-                    errorEl.textContent = `Login failed: ${error.message}`;
-                    errorEl.classList.remove('hidden');
-                }
+                showDashboardTab('orders'); // Show orders tab on login
             }
         });
+    });
+});
 
-        const adminLogoutBtn = document.getElementById('admin-logout-btn');
-        if(adminLogoutBtn) adminLogoutBtn.addEventListener('click', () => {
-            auth.signOut();
+// FAQ toggle initialization (should be done once DOM is ready)
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('#faq-list .faq').forEach(faq => {
+        faq.addEventListener('click', function() {
+            this.classList.toggle('active');
         });
-
-        function checkAdminStatus(user) {
-            const authCheck = document.getElementById('auth-check');
-            const adminPanel = document.getElementById('admin-panel');
-            const adminNameEl = document.getElementById('admin-name');
-            
-            if (user && user.email === ADMIN_EMAIL) {
-                if(authCheck) authCheck.classList.add('hidden');
-                if(adminPanel) adminPanel.classList.remove('hidden');
-                if(adminNameEl) adminNameEl.textContent = user.email;
-                showTab('orders'); 
-            } else {
-                if(authCheck) authCheck.classList.remove('hidden');
-                if(adminPanel) adminPanel.classList.add('hidden');
-                if (user && user.email !== ADMIN_EMAIL) {
-                     auth.signOut();
-                }
-            }
-        }
-
-        // Use the main auth listener for admin check if the elements exist
-        // Note: The original script used a duplicate listener, which is slightly redundant but safer if other listeners are complex. Keeping the check.
-        firebase.auth().onAuthStateChanged(checkAdminStatus); 
-
-        // --- Admin Tab Management (simplified version) ---
-        function showTab(tabName) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('text-blue-600', 'border-blue-600');
-                btn.classList.add('text-gray-600', 'border-transparent');
-            });
-
-            document.querySelectorAll('[id^="content-"]').forEach(content => content.classList.add('hidden'));
-            
-            const selectedBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-            if (selectedBtn) {
-                selectedBtn.classList.add('text-blue-600', 'border-blue-600');
-                selectedBtn.classList.remove('text-gray-600', 'border-transparent');
-            }
-            
-            const contentEl = document.getElementById(`content-${tabName}`);
-            if (contentEl) contentEl.classList.remove('hidden');
-
-            // Load data for the selected tab
-            if (tabName === 'orders') loadAllOrders();
-            if (tabName === 'deposits') loadAllDeposits();
-            if (tabName === 'users') loadAllUsers();
-            if (tabName === 'pricing') loadPriceConfig();
-            if (tabName === 'contact') loadContactMessages();
-        }
-
-        // --- Tab Button Listeners ---
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => showTab(btn.dataset.tab));
-        });
-        
-        // Admin Order Card function (simplified for script completeness)
-        function createOrderCard(orderId, data) {
-            const statusClass = getStatusClass(data.status);
-            const linkDisplay = data.link ? 
-                `<a href="${data.link}" target="_blank" class="text-blue-500 hover:underline">${data.link.length > 35 ? data.link.substring(0, 35) + '...' : data.link}</a>` 
-                : 'N/A';
-            
-            return `
-                <div class="bg-white p-3 rounded-lg shadow border-l-4 border-blue-500 text-sm">
-                    <p class="text-xs text-gray-500 font-mono">ID: ${orderId}</p>
-                    <p class="font-semibold text-blue-800 break-words">${data.service} (${data.quantity} units)</p>
-                    <p class="text-xs">User: ${data.userName} | Cost: <span class="font-bold text-red-500">$${data.totalCost}</span> | Date: ${formatDate(data.createdAt)}</p>
-                    <p class="text-xs break-all mb-3">Link: ${linkDisplay}</p>
-                    
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="status-badge ${statusClass}">${data.status}</span>
-                        
-                        <select id="order-status-${orderId}" class="p-1 border rounded text-xs flex-grow sm:flex-grow-0">
-                            <option value="Pending" ${data.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                            <option value="Processing" ${data.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                            <option value="Complete" ${data.status === 'Complete' ? 'selected' : ''}>Complete</option>
-                            <option value="Canceled" ${data.status === 'Canceled' ? 'selected' : ''}>Canceled</option>
-                        </select>
-                        
-                        <input type="text" id="order-cancel-reason-${orderId}" placeholder="Cancel Reason (for refund)" class="p-1 border rounded text-xs flex-grow min-w-[80px]">
-                        
-                        <button onclick="updateOrderStatus('${orderId}', '${data.userId}', ${data.totalCost})" 
-                                class="bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700 text-xs">
-                            Update
-                        </button>
-                    </div>
-                    ${data.status === 'Canceled' && data.cancelMessage ? `<p class="text-red-500 text-xs mt-2">Reason: ${data.cancelMessage}</p>` : ''}
-                </div>
-            `;
-        }
-
-        async function loadAllOrders() {
-            const ordersListEl = document.getElementById('orders-list');
-            if(!ordersListEl) return;
-            ordersListEl.innerHTML = '<p class="text-center p-4 text-blue-600">Loading orders...</p>';
-
-            db.collection('orders').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-                ordersListEl.innerHTML = '';
-                if (snapshot.empty) {
-                    ordersListEl.innerHTML = '<p class="text-center p-4 text-gray-500">No orders found.</p>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    ordersListEl.insertAdjacentHTML('beforeend', createOrderCard(doc.id, doc.data()));
-                });
-            }, error => {
-                ordersListEl.innerHTML = '<p class="text-center p-4 text-red-500">Error loading orders.</p>';
-            });
-        }
-        
-        // Define Admin update function (must be global or accessible via onclick)
-        window.updateOrderStatus = async function(orderId, userId, cost) {
-            const statusEl = document.getElementById(`order-status-${orderId}`);
-            const reasonEl = document.getElementById(`order-cancel-reason-${orderId}`);
-            
-            if (!statusEl) return;
-
-            const newStatus = statusEl.value;
-            const cancelReason = reasonEl ? reasonEl.value : '';
-            
-            try {
-                if (newStatus === 'Canceled') {
-                    if (!cancelReason) {
-                        alert("Please provide a reason for cancellation (required for refund).");
-                        return;
-                    }
-                    
-                    const userRef = db.collection('users').doc(userId);
-                    await db.runTransaction(async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        const currentBalance = parseFloat(userDoc.data().balance || 0);
-                        const newBalance = (currentBalance + parseFloat(cost)).toFixed(2);
-                        transaction.update(userRef, { balance: newBalance });
-                        transaction.update(db.collection('orders').doc(orderId), {
-                            status: newStatus,
-                            cancelMessage: cancelReason
-                        });
-                    });
-                    alert(`Order ${orderId} canceled and $${cost} refunded to user.`);
-
-                } else {
-                    await db.collection('orders').doc(orderId).update({
-                        status: newStatus,
-                        cancelMessage: firebase.firestore.FieldValue.delete() 
-                    });
-                    alert(`Order ${orderId} status updated to ${newStatus}.`);
-                }
-                
-            } catch (e) {
-                alert("Failed to update status or handle refund: " + e.message);
-            }
-        }
-        
-        // Admin Deposit Management
-        function createDepositCard(depositId, data) {
-            const statusClass = getStatusClass(data.status);
-            const amount = parseFloat(data.amount);
-
-            return `
-                <div class="bg-white p-3 rounded-lg shadow border-l-4 border-yellow-500 text-sm">
-                    <p class="text-xs text-gray-500 font-mono">ID: ${depositId}</p>
-                    <p class="font-semibold text-blue-800">Amount: <span class="font-bold text-green-600">$${amount.toFixed(2)}</span></p>
-                    <p class="text-xs">User: ${data.userName} | Method: ${data.method} | Date: ${formatDate(data.createdAt)}</p>
-                    <p class="text-xs mb-3">TX ID/Ref: ${data.txId || 'N/A'}</p>
-                    
-                    <div class="flex flex-wrap items-center gap-2">
-                        <span class="status-badge ${statusClass}">${data.status}</span>
-                        
-                        ${data.status === 'Pending Review' ? `
-                            <button onclick="handleDepositAction('${depositId}', '${data.userId}', ${amount}, 'Approved')" 
-                                    class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 text-xs">Approve</button>
-                            <input type="text" id="reject-reason-${depositId}" placeholder="Reason" class="p-1 border rounded text-xs flex-grow min-w-[80px]">
-                            <button onclick="handleDepositAction('${depositId}', '${data.userId}', 0, 'Rejected')" 
-                                    class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 text-xs">Reject</button>
-                        ` : `<span class="text-gray-500 text-xs">${data.processedAt ? 'Processed' : ''}</span>`}
-                    </div>
-                    ${data.status === 'Rejected' && data.cancelMessage ? `<p class="text-red-500 text-xs mt-2">Reason: ${data.cancelMessage}</p>` : ''}
-                </div>
-            `;
-        }
-
-        async function loadAllDeposits() {
-            const depositsListEl = document.getElementById('deposits-list');
-            if(!depositsListEl) return;
-            depositsListEl.innerHTML = '<p class="text-center p-4 text-blue-600">Loading deposits...</p>';
-
-            db.collection('deposits').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-                depositsListEl.innerHTML = '';
-                if (snapshot.empty) {
-                    depositsListEl.innerHTML = '<p class="text-center p-4 text-gray-500">No deposit requests found.</p>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    depositsListEl.insertAdjacentHTML('beforeend', createDepositCard(doc.id, doc.data()));
-                });
-            }, error => {
-                depositsListEl.innerHTML = '<p class="text-center p-4 text-red-500">Error loading deposits.</p>';
-            });
-        }
-        
-        window.handleDepositAction = async function(depositId, userId, amount, status) {
-            if (!confirm(`Are you sure you want to set deposit ${depositId} status to ${status}?`)) return;
-
-            try {
-                let rejectionReason = null;
-                
-                if (status === 'Rejected') {
-                    const reasonInput = document.getElementById(`reject-reason-${depositId}`);
-                    rejectionReason = reasonInput ? reasonInput.value : '';
-                    if (!rejectionReason) {
-                        alert("Please enter a rejection reason.");
-                        return;
-                    }
-                }
-                
-                await db.collection('deposits').doc(depositId).update({
-                    status: status,
-                    cancelMessage: rejectionReason || firebase.firestore.FieldValue.delete(),
-                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                if (status === 'Approved') {
-                    const userRef = db.collection('users').doc(userId);
-                    await db.runTransaction(async (transaction) => {
-                        const userDoc = await transaction.get(userRef);
-                        const currentBalance = parseFloat(userDoc.data().balance || 0);
-                        const newBalance = (currentBalance + amount).toFixed(2);
-                        transaction.update(userRef, { balance: newBalance });
-                    });
-                    alert(`Deposit approved and $${amount.toFixed(2)} added to user balance.`);
-                } else if (status === 'Rejected') {
-                     alert("Deposit rejected.");
-                }
-
-            } catch (error) {
-                alert(`Failed to process deposit: ${error.message}`);
-            }
-        }
-        
-        // Admin User Balance Update (must be global or accessible via onclick)
-        window.updateBalanceByEmail = async function() {
-            const emailEl = document.getElementById('balance-user-email');
-            const actionEl = document.getElementById('balance-action');
-            const amountEl = document.getElementById('balance-amount');
-            const msgEl = document.getElementById('balance-message');
-            
-            if (!emailEl || !actionEl || !amountEl || !msgEl) return;
-
-            const email = emailEl.value.trim();
-            const action = actionEl.value;
-            const amount = parseFloat(amountEl.value);
-            
-            msgEl.classList.add('hidden');
-            msgEl.classList.remove('text-red-500', 'text-green-500');
-
-            if (!email || isNaN(amount) || amount <= 0) {
-                msgEl.textContent = "Please enter a valid email and amount.";
-                msgEl.classList.add('text-red-500');
-                msgEl.classList.remove('hidden');
-                return;
-            }
-
-            try {
-                const userSnapshot = await db.collection('users').where('email', '==', email).limit(1).get();
-                
-                if (userSnapshot.empty) {
-                    msgEl.textContent = `User with email ${email} not found.`;
-                    msgEl.classList.add('text-red-500');
-                    msgEl.classList.remove('hidden');
-                    return;
-                }
-                
-                const userDoc = userSnapshot.docs[0];
-                const userRef = userDoc.ref;
-                let newBalance;
-                
-                await db.runTransaction(async (transaction) => {
-                    const doc = await transaction.get(userRef);
-                    const currentBalance = parseFloat(doc.data().balance || 0);
-
-                    if (action === 'add') {
-                        newBalance = currentBalance + amount;
-                    } else {
-                        newBalance = currentBalance - amount;
-                        if (newBalance < 0) newBalance = 0; 
-                    }
-                    
-                    transaction.update(userRef, { balance: newBalance.toFixed(2) });
-                });
-                
-                msgEl.textContent = `Balance updated successfully! New balance: $${newBalance.toFixed(2)}`;
-                msgEl.classList.add('text-green-500');
-                msgEl.classList.remove('hidden');
-                loadAllUsers(); 
-
-            } catch (error) {
-                msgEl.textContent = `Error updating balance: ${error.message}`;
-                msgEl.classList.add('text-red-500');
-                msgEl.classList.remove('hidden');
-            }
-        }
-
-        function createUserCard(userId, data) {
-             const userInitial = data.name ? data.name.charAt(0).toUpperCase() : 'U';
-             const initialColor = data.initialColor || '#4f46e5'; 
-
-            return `
-                <div class="bg-gray-50 p-3 rounded-lg shadow flex justify-between items-center border-l-4 border-gray-400 text-sm">
-                    <div class="flex items-center space-x-2">
-                         <div class="initial-avatar w-8 h-8 flex items-center justify-center text-white font-bold rounded-full text-base" 
-                             style="background-color: ${initialColor};">${userInitial}</div>
-                        <div class="truncate">
-                            <p class="font-semibold text-blue-800 truncate">${data.name || 'N/A'}</p>
-                            <p class="text-xs text-gray-600 truncate">${data.email}</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-lg font-bold text-green-700">$${parseFloat(data.balance || 0).toFixed(2)}</p>
-                        <p class="text-xs text-gray-500">Balance</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        async function loadAllUsers() {
-            const usersListEl = document.getElementById('users-list');
-            if(!usersListEl) return;
-            usersListEl.innerHTML = '<p class="text-center p-4 text-blue-600">Loading users...</p>';
-            
-            db.collection('users').orderBy('balance', 'desc').onSnapshot(snapshot => {
-                usersListEl.innerHTML = '';
-                if (snapshot.empty) {
-                    usersListEl.innerHTML = '<p class="text-center p-4 text-gray-500">No users found.</p>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    usersListEl.insertAdjacentHTML('beforeend', createUserCard(doc.id, doc.data()));
-                });
-            }, error => {
-                usersListEl.innerHTML = '<p class="text-center p-4 text-red-500">Error loading users.</p>';
-            });
-        }
-        
-        // Admin Pricing Logic
-        function renderPriceForm() {
-            const pricingFormEl = document.getElementById('pricing-form');
-            if (!pricingFormEl) return;
-            
-            const statusEl = document.getElementById('price-status');
-            
-            let formHtml = '';
-            
-            for (const platform in PRICE_TEMPLATE) {
-                formHtml += `<h3 class="font-bold mt-4 text-base text-blue-700">${platform}</h3><div class="grid grid-cols-1 gap-2 border p-3 rounded bg-gray-50">`;
-                
-                for (const service in PRICE_TEMPLATE[platform]) {
-                    const currentPrice = (currentPricingData[platform] && currentPricingData[platform][service] !== undefined) 
-                                         ? currentPricingData[platform][service]
-                                         : PRICE_TEMPLATE[platform][service] || 0.00; // Use PRICE_TEMPLATE (DEFAULT_PRICING_FALLBACK) value
-                    
-                    formHtml += `
-                        <div class="flex items-center space-x-2 text-sm">
-                            <label class="w-2/3">${service} (Price/1k):</label>
-                            <input type="number" step="0.00001" min="0" 
-                                   id="price-${platform}-${service}" 
-                                   value="${parseFloat(currentPrice).toFixed(5)}" 
-                                   class="w-1/3 p-2 border rounded text-right">
-                        </div>
-                    `;
-                }
-                formHtml += '</div>';
-            }
-
-            // Re-render the form structure with save button
-            pricingFormEl.innerHTML = formHtml + `
-                <button id="save-prices-btn" onclick="savePriceConfig()" class="bg-green-600 text-white p-3 rounded hover:bg-green-700 mt-4 font-semibold w-full text-sm">Save All Prices</button>
-                <p id="price-status" class="mt-2 text-sm font-semibold">${statusEl ? statusEl.textContent : ''}</p>
-            `;
-        }
-
-        function loadPriceConfig() {
-            const statusEl = document.getElementById('price-status');
-            if(statusEl) statusEl.textContent = 'Fetching real-time prices...';
-            
-            db.collection('prices').doc('servicePricing').onSnapshot(doc => {
-                if (doc.exists) {
-                    currentPricingData = doc.data();
-                    if(statusEl) statusEl.textContent = 'Prices synced in real-time.';
-                } else {
-                    currentPricingData = PRICE_TEMPLATE; // If document doesn't exist, use the template as initial data
-                    if(statusEl) statusEl.textContent = 'Pricing document not found. Using template defaults.';
-                }
-                renderPriceForm(); 
-            }, error => {
-                if(statusEl) statusEl.textContent = 'Error loading prices. Check console.';
-                currentPricingData = PRICE_TEMPLATE;
-                renderPriceForm();
-            });
-        }
-
-        window.savePriceConfig = async function() {
-            const statusEl = document.getElementById('price-status');
-            if(statusEl) statusEl.textContent = 'Saving changes...';
-            
-            const newPricing = {};
-            let hasError = false;
-
-            for (const platform in PRICE_TEMPLATE) {
-                newPricing[platform] = {};
-                for (const service in PRICE_TEMPLATE[platform]) {
-                    const inputId = `price-${platform}-${service}`;
-                    const inputEl = document.getElementById(inputId);
-                    
-                    if (inputEl) {
-                        // Parse the price, ensuring it retains high precision
-                        const newPrice = parseFloat(parseFloat(inputEl.value).toFixed(5)); 
-                        
-                        if (isNaN(newPrice) || newPrice < 0) {
-                            if(statusEl) statusEl.textContent = `Error: Invalid price entered for ${platform} ${service}`;
-                            hasError = true;
-                            break;
-                        }
-                        newPricing[platform][service] = newPrice;
-                    }
-                }
-                if (hasError) break;
-            }
-
-            if (hasError) return;
-
-            try {
-                await db.collection('prices').doc('servicePricing').set(newPricing);
-                if(statusEl) statusEl.textContent = 'Prices updated successfully in real-time!';
-            } catch (error) {
-                if(statusEl) statusEl.textContent = `Failed to save prices: ${error.message}`;
-            }
-        }
-        
-        // Admin Contact Message Logic
-        function createMessageCard(docId, data) {
-            return `
-                <div class="bg-white p-3 rounded-lg shadow border-l-4 border-purple-500 text-sm">
-                    <div class="flex justify-between items-start">
-                        <p class="font-semibold text-blue-800">${data.name || 'Anonymous'}</p>
-                        <p class="text-xs text-gray-500">${formatDate(data.createdAt)}</p>
-                    </div>
-                    <p class="text-xs text-gray-600 mb-2">Email: ${data.email || 'N/A'}</p>
-                    <div class="p-2 bg-gray-50 rounded border border-gray-200">
-                        <p class="text-sm">${data.message || 'No message content.'}</p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        function loadContactMessages() {
-            const messagesListEl = document.getElementById('messages-list');
-            if(!messagesListEl) return;
-            messagesListEl.innerHTML = '<p class="text-center p-4 text-blue-600">Loading messages...</p>';
-            
-            db.collection('contactMessages').orderBy('createdAt', 'desc').limit(50).onSnapshot(snapshot => {
-                messagesListEl.innerHTML = '';
-                if (snapshot.empty) {
-                    messagesListEl.innerHTML = '<p class="text-center p-4 text-gray-500">No contact messages found.</p>';
-                    return;
-                }
-
-                snapshot.forEach(doc => {
-                    messagesListEl.insertAdjacentHTML('beforeend', createMessageCard(doc.id, doc.data()));
-                });
-            }, error => {
-                messagesListEl.innerHTML = '<p class="text-center p-4 text-red-500">Error loading messages.</p>';
-            });
-        }
-
-        // ------------------- WINDOW ONLOAD SETUP -------------------
-
-        window.onload = function() {
-            // 1. Load Prices first (real-time listener)
-            loadServicePrices().then(() => {
-                
-                // 2. Initialize Chart (only if the element exists)
-                const chartElement = document.getElementById('statsChart');
-                if (window.Chart && chartElement) {
-                    let chart = chartElement.getContext('2d');
-                    new Chart(chart, {
-                        type: 'bar',
-                        data: {
-                            labels: ['TikTok', 'Instagram', 'YouTube', 'Facebook'],
-                            datasets: [{
-                                label: 'Orders (in thousands)',
-                                data: [17, 12, 7, 4],
-                                backgroundColor: ['#F472B6','#FB7185','#F87171','#60A5FA'],
-                            }]
-                        },
-                        options: {
-                            plugins: { legend: {display: false} },
-                            scales: {y: {beginAtZero: true, ticks: {stepSize: 2}}}
-                        }
-                    });
-                }
-                
-                // 3. Final setup
-                const langUrBtn = document.getElementById('lang-ur');
-                if (langUrBtn && langUrBtn.classList.contains('active')) {
-                     currentLanguage = 'ur';
-                }
-                applyCurrentLanguage();
-                
-                loadMainTestimonials(); 
-                
-                // If user is already logged in, initialize dashboard visibility and data loading
-                auth.onAuthStateChanged(user => {
-                    updateMobileMenuVisibility(user);
-                    if (user) {
-                        showDashboardTab('orders'); 
-                    }
-                });
-            });
-        }
-        
-    
+    });
+});
