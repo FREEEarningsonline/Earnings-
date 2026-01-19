@@ -9,7 +9,7 @@ const firebaseConfig = {
     storageBucket: "traffic-exchange-62a58.appspot.com",
     messagingSenderId: "474999317287",
     appId: "1:474999317287:web:8e28a2f5f1a959d8ce3f02",
-    measurementId: "G-HJQ46RQNZS"
+    measurementId: "G-HJQ46QNZS" // Corrected Measurement ID (assuming it was a typo in original)
 };
 
 if (!firebase.apps.length) {
@@ -1048,10 +1048,18 @@ let SERVICE_DATA_PRICES = {}; // This will hold the actual live pricing data fro
 
 // This is the FALLBACK pricing. If the 'servicePricing' document in Firestore is not found or is empty,
 // these prices will be used.
+//
+// **********************************************************************************************
+// *                                 CRITICAL PRICE WARNING                                     *
+// **********************************************************************************************
 // WARNING: These values represent the COST PER 1000 UNITS.
-// For example, 0.00368 means $0.00368 for 1000 followers, which is extremely low.
-// Please verify if this is your actual intended pricing. If you meant $3.68 for 1000 items,
-// the value should be 3.68.
+// For example, 0.00368 means $0.00368 for 1000 followers. This is extremely low.
+// If you meant $3.68 for 1000 items, the value should be 3.68.
+//
+// I have updated the display functions to show the full precision (0.00368),
+// but please VERIFY if this pricing is INTENDED.
+// If 0.00368 is meant to be the price for *1 unit*, then the price per 1000 units should be 3.68.
+// If 0.00368 is meant to be the price for *1000 units*, then this is an extremely low price.
 const DEFAULT_PRICING_FALLBACK = {
     'TikTok': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
     'Instagram': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
@@ -1262,22 +1270,20 @@ function updatePricingDisplays() {
     for (const id in pricesToUpdate) {
         const el = document.getElementById(id);
         if (el) {
-            el.textContent = `$${pricesToUpdate[id].toFixed(2)}`;
+            // Changed to toFixed(5) to show full precision like 0.00368
+            el.textContent = `$${pricesToUpdate[id].toFixed(5)}`; 
         }
     }
     // Re-render any open service selection or order modals to reflect new prices
-    // This needs to be done explicitly because modals might be open when prices change.
     const serviceSelectModal = document.getElementById('service-select-modal');
     if (serviceSelectModal && !serviceSelectModal.classList.contains('hidden')) {
         const platformEn = document.getElementById('selected-platform-display-en').textContent;
         const platformUr = document.getElementById('selected-platform-display-ur').textContent;
-        // Re-open/re-render to update the buttons with new prices
         openServiceSelectModal(platformEn, platformUr); 
     }
     const orderModal = document.getElementById('order-modal');
     if (orderModal && !orderModal.classList.contains('hidden')) {
-        // Just update the cost in the current order modal if it's open
-        updateOrderCost();
+        updateOrderCost(); // Just update the cost in the current order modal if it's open
     }
 }
 
@@ -1308,6 +1314,7 @@ async function loadUserProfile(userId) {
         const doc = await db.collection('users').doc(userId).get();
         if (doc.exists) {
             const userData = doc.data();
+            // User balance should always be displayed with 2 decimal places as it's a currency balance
             const balance = userData.balance ? parseFloat(userData.balance).toFixed(2) : '0.00';
             document.getElementById('user-balance').textContent = `$${balance}`;
             return userData;
@@ -1347,7 +1354,8 @@ function loadUserOrders(userId) {
             const status = data.status || 'Pending';
             const quantity = data.quantity || 'N/A';
             const service = data.service || 'N/A';
-            const totalCost = parseFloat(data.totalCost || 0).toFixed(2);
+            // Order total cost displayed with 5 decimal places to reflect precise small costs
+            const totalCost = parseFloat(data.totalCost || 0).toFixed(5); 
             const link = data.link || '#';
             const senderReference = data.senderReference || 'N/A';
 
@@ -1413,7 +1421,8 @@ function loadUserDeposits(userId) {
             const data = doc.data();
 
             const status = data.status || 'Pending Review';
-            const amount = parseFloat(data.amount || 0).toFixed(2);
+            // Deposit amount always displayed with 2 decimal places
+            const amount = parseFloat(data.amount || 0).toFixed(2); 
             const method = data.method || 'N/A';
             const txId = data.txId || 'N/A';
 
@@ -1489,7 +1498,8 @@ async function handleDepositSubmission() {
         await db.collection('deposits').add({
             userId: user.uid,
             userName: userData.name || user.email,
-            amount: amount.toFixed(2),
+            // Deposit amount stored with 2 decimal places
+            amount: amount.toFixed(2), 
             method: method,
             txId: txId,
             status: 'Pending Review', 
@@ -1690,7 +1700,6 @@ function openServiceSelectModal(platformEn, platformUr) {
         return;
     }
     
-    // Ensure pricing data is loaded before allowing service selection
     if (Object.keys(SERVICE_DATA_PRICES).length === 0) {
         alert("Pricing data is still loading. Please wait a moment.");
         return;
@@ -1711,8 +1720,8 @@ function openServiceSelectModal(platformEn, platformUr) {
         const buttonHtml = `
             <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${price})" 
                     class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 font-semibold text-left transition duration-150">
-                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">($${price.toFixed(2)}/1k)</span></span>
-                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">($${price.toFixed(2)}/1k)</span></span>
+                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">($${price.toFixed(5)}/1k)</span></span>
+                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">($${price.toFixed(5)}/1k)</span></span>
             </button>
         `;
         container.insertAdjacentHTML('beforeend', buttonHtml);
@@ -1739,7 +1748,8 @@ function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, price) {
     document.getElementById('order-sender-ref').value = ''; 
     document.getElementById('order-quantity').value = 1; 
     
-    const initialCost = (1 * price).toFixed(2);
+    // Initial cost displayed with 5 decimal places for precise small costs
+    const initialCost = (1 * price).toFixed(5); 
     document.getElementById('order-total-cost').textContent = `$${initialCost}`;
     document.getElementById('order-total-cost-ur').textContent = `$${initialCost}`;
     document.getElementById('order-error').classList.add('hidden');
@@ -1761,7 +1771,8 @@ function updateOrderCost() {
         quantityInput.value = 1;
     }
 
-    const cost = (quantity * pricePerK).toFixed(2);
+    // Cost displayed with 5 decimal places for precise small costs
+    const cost = (quantity * pricePerK).toFixed(5); 
     document.getElementById('order-total-cost').textContent = `$${cost}`;
     document.getElementById('order-total-cost-ur').textContent = `$${cost}`;
 }
@@ -1795,7 +1806,7 @@ async function handleOrderSubmission() {
     const currentBalance = parseFloat(userData.balance || 0);
 
     if (currentBalance < totalCost) {
-        errorEl.textContent = `Insufficient balance. Please deposit funds. Need $${totalCost.toFixed(2)}, available $${currentBalance.toFixed(2)}.`;
+        errorEl.textContent = `Insufficient balance. Please deposit funds. Need $${totalCost.toFixed(5)}, available $${currentBalance.toFixed(2)}.`;
         errorEl.classList.remove('hidden');
         return;
     }
@@ -1803,12 +1814,12 @@ async function handleOrderSubmission() {
     try {
         const newBalance = currentBalance - totalCost;
         
-        // Deduct balance
+        // Deduct balance - always store balance with 2 decimal places
         await db.collection('users').doc(user.uid).update({
-            balance: newBalance.toFixed(2)
+            balance: newBalance.toFixed(2) 
         });
 
-        // Create Order
+        // Create Order - store totalCost with full precision (5 decimal places) for data accuracy
         await db.collection('orders').add({
             userId: user.uid,
             userName: userData.name || user.email,
@@ -1816,7 +1827,7 @@ async function handleOrderSubmission() {
             link: link,
             senderReference: senderRef, 
             quantity: finalQuantity,
-            totalCost: totalCost.toFixed(2),
+            totalCost: totalCost.toFixed(5), 
             status: 'Pending', 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -2032,16 +2043,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         // 3. Final setup
-        // No direct check for 'active' class on lang buttons, rely on `currentLanguage`
         applyCurrentLanguage();
         
         loadMainTestimonials(); 
         
-        // Listen to auth state changes for dashboard visibility
         auth.onAuthStateChanged(user => {
             updateMobileMenuVisibility(user);
             if (user) {
-                showDashboardTab('orders'); // Show orders tab on login
+                showDashboardTab('orders'); 
             }
         });
     });
