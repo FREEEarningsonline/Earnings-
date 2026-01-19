@@ -1056,7 +1056,7 @@ let SERVICE_DATA_PRICES = {}; // This will hold the actual live pricing data fro
 // For example, 0.00368 means $0.00368 for 1000 followers. This is extremely low.
 // If you meant $3.68 for 1000 items, the value should be 3.68.
 //
-// I have updated the display functions to show the full precision (0.00368),
+// I have updated the display functions to show the full precision (0.00368) for small values,
 // but please VERIFY if this pricing is INTENDED.
 // If 0.00368 is meant to be the price for *1 unit*, then the price per 1000 units should be 3.68.
 // If 0.00368 is meant to be the price for *1000 units*, then this is an extremely low price.
@@ -1074,6 +1074,73 @@ const PAYMENT_ACCOUNTS = {
     'BankTransfer': { name: "Nazim Mustafa (myABL)", number: "14720010142555460012" },
     'Binance': { name: "Contact Admin", number: "+92 313 0599032" }
 };
+
+// --- CURRENCY EXCHANGE LOGIC ---
+const EXCHANGE_RATE_API_KEY = "18c6b7a3bf2b9e8fa40b7fdc"; // <<<< Replace with your actual API Key from exchangerate-api.com
+let exchangeRates = {}; // Stores conversion rates relative to USD
+let selectedCurrency = localStorage.getItem('selectedCurrency') || 'USD'; // Default or saved currency
+
+const CURRENCY_SYMBOLS = {
+    'USD': '$',
+    'PKR': 'Rs',
+    'EUR': '€',
+    'GBP': '£',
+    'JPY': '¥',
+    'CAD': '$',
+    'AUD': '$',
+    'SAR': '﷼', // Saudi Riyal
+    'AED': 'د.إ', // UAE Dirham
+    // Add more as needed based on what ExchangeRate-API provides
+};
+
+// Fetches exchange rates from the API
+async function fetchExchangeRates() {
+    if (!EXCHANGE_RATE_API_KEY || EXCHANGE_RATE_API_KEY === "YOUR_EXCHANGE_RATE_API_KEY") {
+        console.warn("Exchange Rate API Key is not set or is default. Currency conversion will not work, defaulting to USD.");
+        exchangeRates = { 'USD': 1, 'PKR': 278 }; // Fallback with a sample PKR rate
+        return;
+    }
+    try {
+        const response = await fetch(`https://v6.exchangerate-api.com/v6/${EXCHANGE_RATE_API_KEY}/latest/USD`);
+        const data = await response.json();
+        if (data.result === 'success') {
+            exchangeRates = data.conversion_rates;
+            console.log("Exchange rates fetched successfully.");
+        } else {
+            console.error("Failed to fetch exchange rates:", data['error-type']);
+            exchangeRates = { 'USD': 1, 'PKR': 278 }; // Fallback on API error
+        }
+    } catch (error) {
+        console.error("Error fetching exchange rates:", error);
+        exchangeRates = { 'USD': 1, 'PKR': 278 }; // Fallback on network error
+    }
+}
+
+// Converts a USD amount to the currently selected currency
+function convertPriceToSelectedCurrency(usdAmount) {
+    if (selectedCurrency === 'USD' || !exchangeRates[selectedCurrency]) {
+        return usdAmount; // No conversion needed or rates not available for selected currency
+    }
+    return usdAmount * exchangeRates[selectedCurrency];
+}
+
+// Returns the symbol for the selected currency
+function getCurrencySymbol() {
+    return CURRENCY_SYMBOLS[selectedCurrency] || selectedCurrency + ' '; // Fallback to code if symbol not found
+}
+
+// Formats a number for display based on its value
+function formatConvertedPrice(value) {
+    // If value is very small (e.g., 0.00368), show more decimal places, otherwise standard 2
+    // Also ensures that 0 is displayed as 0.00
+    if (value === 0) {
+        return "0.00";
+    }
+    if (Math.abs(value) < 0.01) { // Check for non-zero small values
+        return value.toFixed(5); // e.g., 0.00368
+    }
+    return value.toFixed(2); // e.g., 3.68, 123.45
+}
 
 // ------------------- UI & Language Functions -------------------
 
@@ -1125,7 +1192,6 @@ function formatDate(timestamp) {
 
 
 function showDashboardTab(tabName) {
-    // Close mobile menu if open
     const menu = document.getElementById('mobile-menu-dropdown');
     if(menu.classList.contains('open')) {
         toggleMobileMenu();
@@ -1141,7 +1207,7 @@ function showDashboardTab(tabName) {
     
     tabs.forEach(name => contents[name].classList.add('hidden'));
 
-    document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+    document.querySelectorAll('.dashboard-nav-link').forEach(tab => { // Use class for all dashboard tabs
         tab.classList.remove('border-blue-600', 'text-blue-600');
         tab.classList.add('text-gray-600', 'hover:text-blue-600', 'border-transparent');
     });
@@ -1224,42 +1290,38 @@ function getUserStatusClass(status) {
 }
 
 
-// ------------------- LIVE PRICE LOGIC -------------------
+// ------------------- LIVE PRICE LOGIC (using updateAllPrices) -------------------
 
 async function loadServicePrices() {
-    // Use a live listener (onSnapshot) to keep prices updated in real-time
-    // This document name 'servicePricing' should match what the admin panel saves to.
     db.collection('prices').doc('servicePricing').onSnapshot(doc => { 
         if (doc.exists && doc.data()) {
             SERVICE_DATA_PRICES = doc.data();
             console.log("Using prices from Firestore 'servicePricing' document.");
         } else {
-            // If 'servicePricing' document doesn't exist or is empty, fall back to default pricing
             SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
             console.warn("Firestore 'servicePricing' document not found or empty. Using DEFAULT_PRICING_FALLBACK.");
         }
-        updatePricingDisplays(); // Always update UI after loading prices
+        updateAllPrices(); // Now calls the central update function
     }, error => {
         console.error("Error fetching service prices from Firestore, using defaults:", error);
         SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
-        updatePricingDisplays(); // Still update UI with fallbacks on error
+        updateAllPrices(); // Still update UI with fallbacks on error
     });
 }
 
 function getPriceForService(platform, service) {
-    // Prioritize dynamically loaded prices (from SERVICE_DATA_PRICES)
     if (SERVICE_DATA_PRICES[platform] && SERVICE_DATA_PRICES[platform][service] !== undefined) {
         return parseFloat(SERVICE_DATA_PRICES[platform][service]);
     }
-    // Fallback to static defaults if dynamic data is missing for a specific service/platform
     if (DEFAULT_PRICING_FALLBACK[platform] && DEFAULT_PRICING_FALLBACK[platform][service] !== undefined) {
         return parseFloat(DEFAULT_PRICING_FALLBACK[platform][service]);
     }
     return 0.00; // Default to 0 if price isn't found anywhere
 }
 
-function updatePricingDisplays() {
-    // These IDs directly correspond to the platforms and services in your pricing objects
+// Central function to update all prices in the UI
+function updateAllPrices() {
+    // 1. Update prices in the main section (e.g., hero section pricing cards)
     const pricesToUpdate = {
         'price-TikTok-Followers': getPriceForService('TikTok', 'Followers'),
         'price-Instagram-Likes': getPriceForService('Instagram', 'Likes'),
@@ -1270,11 +1332,12 @@ function updatePricingDisplays() {
     for (const id in pricesToUpdate) {
         const el = document.getElementById(id);
         if (el) {
-            // Changed to toFixed(5) to show full precision like 0.00368
-            el.textContent = `$${pricesToUpdate[id].toFixed(5)}`; 
+            const convertedValue = convertPriceToSelectedCurrency(pricesToUpdate[id]);
+            el.textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedValue)}`; 
         }
     }
-    // Re-render any open service selection or order modals to reflect new prices
+    
+    // 2. Re-render any open service selection or order modals to reflect new prices
     const serviceSelectModal = document.getElementById('service-select-modal');
     if (serviceSelectModal && !serviceSelectModal.classList.contains('hidden')) {
         const platformEn = document.getElementById('selected-platform-display-en').textContent;
@@ -1284,6 +1347,20 @@ function updatePricingDisplays() {
     const orderModal = document.getElementById('order-modal');
     if (orderModal && !orderModal.classList.contains('hidden')) {
         updateOrderCost(); // Just update the cost in the current order modal if it's open
+    }
+
+    // 3. Update dashboard prices (balance, order history, deposit history) IF logged in
+    if (auth.currentUser) {
+        loadUserProfile(auth.currentUser.uid); // Will update user balance
+        // Re-load the currently active dashboard tab to refresh its content with new currency
+        const activeTabElement = document.querySelector('.dashboard-nav-link.border-blue-600');
+        if (activeTabElement) {
+            const activeTabName = activeTabElement.id.replace('tab-', '').replace('-ur', '');
+            showDashboardTab(activeTabName); 
+        } else {
+            // Default to orders if no tab is active (e.g., first login)
+            showDashboardTab('orders');
+        }
     }
 }
 
@@ -1314,19 +1391,21 @@ async function loadUserProfile(userId) {
         const doc = await db.collection('users').doc(userId).get();
         if (doc.exists) {
             const userData = doc.data();
+            const usdBalance = parseFloat(userData.balance || 0);
+            const convertedBalance = convertPriceToSelectedCurrency(usdBalance);
             // User balance should always be displayed with 2 decimal places as it's a currency balance
-            const balance = userData.balance ? parseFloat(userData.balance).toFixed(2) : '0.00';
-            document.getElementById('user-balance').textContent = `$${balance}`;
+            document.getElementById('user-balance').textContent = `${getCurrencySymbol()}${convertedBalance.toFixed(2)}`;
             return userData;
         } else {
+             // If user doc doesn't exist, create it with default balance in USD
              await db.collection('users').doc(userId).set({ balance: '0.00' }, { merge: true });
-             document.getElementById('user-balance').textContent = `$0.00`;
+             document.getElementById('user-balance').textContent = `${getCurrencySymbol()}0.00`;
              return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
         }
     } catch (e) {
         console.error("Error loading user profile:", e);
     }
-    document.getElementById('user-balance').textContent = '$0.00';
+    document.getElementById('user-balance').textContent = `${getCurrencySymbol()}0.00`;
     return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
 }
 
@@ -1354,8 +1433,8 @@ function loadUserOrders(userId) {
             const status = data.status || 'Pending';
             const quantity = data.quantity || 'N/A';
             const service = data.service || 'N/A';
-            // Order total cost displayed with 5 decimal places to reflect precise small costs
-            const totalCost = parseFloat(data.totalCost || 0).toFixed(5); 
+            const usdTotalCost = parseFloat(data.totalCost || 0);
+            const convertedTotalCost = convertPriceToSelectedCurrency(usdTotalCost);
             const link = data.link || '#';
             const senderReference = data.senderReference || 'N/A';
 
@@ -1376,8 +1455,8 @@ function loadUserOrders(userId) {
                     <div class="space-y-1 text-sm flex-grow">
                         <p class="font-bold text-base text-blue-900 lang lang-en">${service} (Qty: ${quantity})</p>
                         <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">${service} (مقدار: ${quantity})</p>
-                        <p class="text-xs text-gray-600 lang lang-en">Cost: $${totalCost} | Ordered on: ${date}</p>
-                        <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">لاگت: $${totalCost} | تاریخ: ${date}</p>
+                        <p class="text-xs text-gray-600 lang lang-en">Cost: ${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)} | Ordered on: ${date}</p>
+                        <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">لاگت: ${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)} | تاریخ: ${date}</p>
                         <p class="text-xs text-gray-400 lang lang-en">Link: <span class="order-card-link">${link}</span> (Ref: ${senderReference})</p>
                         ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
                         ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
@@ -1421,8 +1500,8 @@ function loadUserDeposits(userId) {
             const data = doc.data();
 
             const status = data.status || 'Pending Review';
-            // Deposit amount always displayed with 2 decimal places
-            const amount = parseFloat(data.amount || 0).toFixed(2); 
+            const usdAmount = parseFloat(data.amount || 0);
+            const convertedAmount = convertPriceToSelectedCurrency(usdAmount);
             const method = data.method || 'N/A';
             const txId = data.txId || 'N/A';
 
@@ -1439,8 +1518,8 @@ function loadUserDeposits(userId) {
             const depositHtml = `
                 <div class="bg-white p-4 rounded-lg shadow flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-yellow-500">
                     <div class="space-y-1 text-sm flex-grow">
-                        <p class="font-bold text-base text-blue-900 lang lang-en">Amount: $${amount}</p>
-                        <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">رقم: $${amount}</p>
+                        <p class="font-bold text-base text-blue-900 lang lang-en">Amount: ${getCurrencySymbol()}${convertedAmount.toFixed(2)}</p>
+                        <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">رقم: ${getCurrencySymbol()}${convertedAmount.toFixed(2)}</p>
                         <p class="text-xs text-gray-600 lang lang-en">Method: ${method} | Date: ${date}</p>
                         <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">طریقہ: ${method} | تاریخ: ${date}</p>
                         <p class="text-xs text-gray-400 lang lang-en">TX ID/Ref: <span class="order-card-link">${txId}</span></p>
@@ -1481,7 +1560,8 @@ async function handleDepositSubmission() {
     errorEl.classList.add('hidden');
 
     if (isNaN(amount) || amount < 1) {
-        errorEl.textContent = "Minimum deposit amount is $1.";
+        // Deposit amount is always expected in USD to maintain consistent balance storage
+        errorEl.textContent = "Minimum deposit amount is $1 USD."; 
         errorEl.classList.remove('hidden');
         return;
     }
@@ -1498,7 +1578,7 @@ async function handleDepositSubmission() {
         await db.collection('deposits').add({
             userId: user.uid,
             userName: userData.name || user.email,
-            // Deposit amount stored with 2 decimal places
+            // Deposit amount stored in USD (2 decimal places for currency)
             amount: amount.toFixed(2), 
             method: method,
             txId: txId,
@@ -1714,14 +1794,15 @@ function openServiceSelectModal(platformEn, platformUr) {
     const services = SERVICE_DATA[platformEn].services;
     
     for (const serviceNameEn in services) {
-        const price = getPriceForService(platformEn, serviceNameEn);
+        const priceUSD = getPriceForService(platformEn, serviceNameEn); // Get price in USD
+        const convertedPrice = convertPriceToSelectedCurrency(priceUSD); // Convert for display
         const data = services[serviceNameEn];
         
         const buttonHtml = `
-            <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${price})" 
+            <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${priceUSD})" 
                     class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 font-semibold text-left transition duration-150">
-                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">($${price.toFixed(5)}/1k)</span></span>
-                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">($${price.toFixed(5)}/1k)</span></span>
+                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">(${getCurrencySymbol()}${formatConvertedPrice(convertedPrice)}/1k)</span></span>
+                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">(${getCurrencySymbol()}${formatConvertedPrice(convertedPrice)}/1k)</span></span>
             </button>
         `;
         container.insertAdjacentHTML('beforeend', buttonHtml);
@@ -1732,12 +1813,12 @@ function openServiceSelectModal(platformEn, platformUr) {
     openModal('service-select-modal');
 }
 
-function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, price) {
+function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, priceUSD) { // Pass price in USD
     
     closeModal('service-select-modal'); 
 
     document.getElementById('order-service-name').value = `${platformEn} ${serviceEn}`;
-    document.getElementById('order-service-price').value = price;
+    document.getElementById('order-service-price').value = priceUSD; // Store/use USD price for calculations
     
     document.getElementById('order-platform-display').textContent = platformEn;
     document.getElementById('order-platform-display-ur').textContent = platformUr;
@@ -1748,10 +1829,11 @@ function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, price) {
     document.getElementById('order-sender-ref').value = ''; 
     document.getElementById('order-quantity').value = 1; 
     
-    // Initial cost displayed with 5 decimal places for precise small costs
-    const initialCost = (1 * price).toFixed(5); 
-    document.getElementById('order-total-cost').textContent = `$${initialCost}`;
-    document.getElementById('order-total-cost-ur').textContent = `$${initialCost}`;
+    // Initial cost displayed in selected currency
+    const initialCostUSD = (1 * priceUSD);
+    const convertedInitialCost = convertPriceToSelectedCurrency(initialCostUSD);
+    document.getElementById('order-total-cost').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedInitialCost)}`;
+    document.getElementById('order-total-cost-ur').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedInitialCost)}`;
     document.getElementById('order-error').classList.add('hidden');
 
     applyCurrentLanguage();
@@ -1763,7 +1845,7 @@ document.getElementById('order-quantity').addEventListener('input', updateOrderC
 
 function updateOrderCost() {
     const quantityInput = document.getElementById('order-quantity');
-    const pricePerK = parseFloat(document.getElementById('order-service-price').value);
+    const pricePerK_USD = parseFloat(document.getElementById('order-service-price').value); // Get USD price
     let quantity = parseInt(quantityInput.value);
 
     if (quantity < 1 || isNaN(quantity)) {
@@ -1771,10 +1853,11 @@ function updateOrderCost() {
         quantityInput.value = 1;
     }
 
-    // Cost displayed with 5 decimal places for precise small costs
-    const cost = (quantity * pricePerK).toFixed(5); 
-    document.getElementById('order-total-cost').textContent = `$${cost}`;
-    document.getElementById('order-total-cost-ur').textContent = `$${cost}`;
+    const totalCostUSD = (quantity * pricePerK_USD); // Calculate total cost in USD
+    const convertedTotalCost = convertPriceToSelectedCurrency(totalCostUSD); // Convert for display
+
+    document.getElementById('order-total-cost').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)}`;
+    document.getElementById('order-total-cost-ur').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)}`;
 }
 
 document.getElementById('order-btn-submit').addEventListener('click', handleOrderSubmission);
@@ -1785,7 +1868,7 @@ async function handleOrderSubmission() {
     if (!user) return;
     
     const serviceName = document.getElementById('order-service-name').value;
-    const pricePerK = parseFloat(document.getElementById('order-service-price').value);
+    const pricePerK_USD = parseFloat(document.getElementById('order-service-price').value); // USD price
     const link = document.getElementById('order-link').value;
     const senderRef = document.getElementById('order-sender-ref').value; 
     const quantityK = parseInt(document.getElementById('order-quantity').value); 
@@ -1799,27 +1882,29 @@ async function handleOrderSubmission() {
         return;
     }
     
-    const totalCost = quantityK * pricePerK; // Calculate total cost based on quantity (in thousands)
+    const totalCostUSD = quantityK * pricePerK_USD; // Total cost calculated in USD
     const finalQuantity = quantityK * 1000; // Store actual number of items
 
     const userData = await loadUserProfile(user.uid);
-    const currentBalance = parseFloat(userData.balance || 0);
+    const currentBalanceUSD = parseFloat(userData.balance || 0); // Balance is in USD
 
-    if (currentBalance < totalCost) {
-        errorEl.textContent = `Insufficient balance. Please deposit funds. Need $${totalCost.toFixed(5)}, available $${currentBalance.toFixed(2)}.`;
+    if (currentBalanceUSD < totalCostUSD) {
+        const convertedRequired = convertPriceToSelectedCurrency(totalCostUSD);
+        const convertedAvailable = convertPriceToSelectedCurrency(currentBalanceUSD);
+        errorEl.textContent = `Insufficient balance. Please deposit funds. Need ${getCurrencySymbol()}${formatConvertedPrice(convertedRequired)}, available ${getCurrencySymbol()}${convertedAvailable.toFixed(2)}.`;
         errorEl.classList.remove('hidden');
         return;
     }
 
     try {
-        const newBalance = currentBalance - totalCost;
+        const newBalanceUSD = currentBalanceUSD - totalCostUSD;
         
-        // Deduct balance - always store balance with 2 decimal places
+        // Deduct balance - always store balance with 2 decimal places in USD
         await db.collection('users').doc(user.uid).update({
-            balance: newBalance.toFixed(2) 
+            balance: newBalanceUSD.toFixed(2) 
         });
 
-        // Create Order - store totalCost with full precision (5 decimal places) for data accuracy
+        // Create Order - store totalCost in USD with full precision for data accuracy
         await db.collection('orders').add({
             userId: user.uid,
             userName: userData.name || user.email,
@@ -1827,12 +1912,12 @@ async function handleOrderSubmission() {
             link: link,
             senderReference: senderRef, 
             quantity: finalQuantity,
-            totalCost: totalCost.toFixed(5), 
+            totalCost: totalCostUSD.toFixed(5), // Store the actual USD cost
             status: 'Pending', 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert(`Order placed successfully! New balance: $${newBalance.toFixed(2)}`);
+        alert(`Order placed successfully! New balance: ${getCurrencySymbol()}${newBalanceUSD.toFixed(2)}`);
         closeModal('order-modal');
         loadUserProfile(user.uid); 
         loadUserOrders(user.uid); 
@@ -1876,7 +1961,7 @@ async function handleSignup() {
             name: name,
             email: email,
             gender: gender, 
-            balance: '0.00', 
+            balance: '0.00', // Initial balance always in USD
             initialColor: avatarColor, // Store the generated initial color
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -1950,7 +2035,14 @@ auth.onAuthStateChanged((user) => {
             document.getElementById('review-name').value = userData.name || user.email.split('@')[0];
         }); 
         
-        showDashboardTab('orders'); 
+        // Ensure the dashboard tab content is refreshed with current currency
+        const activeTabElement = document.querySelector('.dashboard-nav-link.border-blue-600');
+        if (activeTabElement) {
+            const activeTabName = activeTabElement.id.replace('tab-', '').replace('-ur', '');
+            showDashboardTab(activeTabName); 
+        } else {
+            showDashboardTab('orders'); // Default if no tab active
+        }
         
     } else {
         const loginButtonEn = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en">Login</button>`;
@@ -2015,43 +2107,98 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// NEW: Populate currency dropdowns and handle changes
+function initializeCurrencySelector() {
+    const currencySelects = [
+        document.getElementById('currency-select'),
+        document.getElementById('currency-select-mobile') // For mobile menu
+    ].filter(Boolean); // Filter out null if one is not present
+
+    if (currencySelects.length === 0) return;
+
+    // Populate dropdown with all available currencies from the API
+    // Or fallback to manually added common currencies if API fails or no key
+    const populateOptions = (selectElement) => {
+        selectElement.innerHTML = ''; // Clear existing options
+
+        // Always add USD first
+        let optionUSD = document.createElement('option');
+        optionUSD.value = 'USD';
+        optionUSD.textContent = `${CURRENCY_SYMBOLS['USD']} USD`;
+        selectElement.appendChild(optionUSD);
+
+        const sortedCurrencies = Object.keys(exchangeRates).sort();
+        for (const code of sortedCurrencies) {
+            if (code === 'USD') continue; // USD already added
+            const option = document.createElement('option');
+            option.value = code;
+            option.textContent = `${CURRENCY_SYMBOLS[code] || ''} ${code}`;
+            selectElement.appendChild(option);
+        }
+    };
+
+    currencySelects.forEach(selectElement => {
+        populateOptions(selectElement);
+        // Set initial selected currency from localStorage
+        selectElement.value = selectedCurrency;
+
+        // Add event listener for currency change
+        selectElement.addEventListener('change', (event) => {
+            selectedCurrency = event.target.value;
+            localStorage.setItem('selectedCurrency', selectedCurrency); // Save preference
+            
+            // Sync both dropdowns if present
+            currencySelects.forEach(otherSelect => {
+                if (otherSelect !== event.target) {
+                    otherSelect.value = selectedCurrency;
+                }
+            });
+
+            updateAllPrices(); // Re-render all prices
+        });
+    });
+}
+
 
 // Chart initialization and initial loads
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. Load Prices first (real-time listener)
-    loadServicePrices().then(() => {
-        
-        // 2. Initialize Chart
-        let chartElement = document.getElementById('statsChart');
-        if (chartElement) {
-            let chart = chartElement.getContext('2d');
-            new Chart(chart, {
-                type: 'bar',
-                data: {
-                    labels: ['TikTok', 'Instagram', 'YouTube', 'Facebook'],
-                    datasets: [{
-                        label: 'Orders (in thousands)',
-                        data: [17, 12, 7, 4],
-                        backgroundColor: ['#F472B6','#FB7185','#F87171','#60A5FA'],
-                    }]
-                },
-                options: {
-                    plugins: { legend: {display: false} },
-                    scales: {y: {beginAtZero: true, ticks: {stepSize: 2}}}
+    // 0. Fetch exchange rates first
+    fetchExchangeRates().finally(() => { // Use finally to ensure subsequent steps run even if API fails
+        // 1. Load Prices from Firestore (real-time listener)
+        loadServicePrices().then(() => {
+            // 2. Initialize Chart
+            let chartElement = document.getElementById('statsChart');
+            if (chartElement) {
+                let chart = chartElement.getContext('2d');
+                new Chart(chart, {
+                    type: 'bar',
+                    data: {
+                        labels: ['TikTok', 'Instagram', 'YouTube', 'Facebook'],
+                        datasets: [{
+                            label: 'Orders (in thousands)',
+                            data: [17, 12, 7, 4],
+                            backgroundColor: ['#F472B6','#FB7185','#F87171','#60A5FA'],
+                        }]
+                    },
+                    options: {
+                        plugins: { legend: {display: false} },
+                        scales: {y: {beginAtZero: true, ticks: {stepSize: 2}}}
+                    }
+                });
+            }
+            
+            // 3. Final setup
+            initializeCurrencySelector(); // NEW: Initialize currency selector after rates are potentially loaded
+            applyCurrentLanguage();
+            loadMainTestimonials(); 
+            
+            auth.onAuthStateChanged(user => {
+                updateMobileMenuVisibility(user);
+                if (user) {
+                    // This will be called by updateAllPrices after loading user profile/balances
+                    // showDashboardTab('orders'); 
                 }
             });
-        }
-        
-        // 3. Final setup
-        applyCurrentLanguage();
-        
-        loadMainTestimonials(); 
-        
-        auth.onAuthStateChanged(user => {
-            updateMobileMenuVisibility(user);
-            if (user) {
-                showDashboardTab('orders'); 
-            }
         });
     });
 });
