@@ -84,8 +84,8 @@
         
         <!-- Dashboard Items (Visible only when logged in) -->
         <div id="mobile-menu-dashboard-links" class="space-y-3 border-t border-blue-700 pt-3 hidden">
-            <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('orders');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-en"><i class="fas fa-list-alt mr-2"></i>Order History</a>
-            <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('orders');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-ur urdu hidden"><i class="fas fa-list-alt mr-2"></i>آرڈر ہسٹری</a>
+            <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('orders');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-en"><i class="fas fa-list-alt mr-2"></i>Order Form / History</a>
+            <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('orders');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-ur urdu hidden"><i class="fas fa-list-alt mr-2"></i>آرڈر فارم / ہسٹری</a>
 
             <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('deposits');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-en"><i class="fas fa-wallet mr-2"></i>Deposit History</a>
             <a href="#user-dashboard" onclick="toggleMobileMenu(); showDashboardTab('deposits');" class="block text-yellow-400 font-semibold hover:bg-blue-700 p-2 rounded lang lang-ur urdu hidden"><i class="fas fa-wallet mr-2"></i>ڈپازٹ ہسٹری</a>
@@ -164,7 +164,7 @@
     </div>
 </div>
 
-<!-- WALLET DEPOSIT MODAL -->
+<!-- WALLET DEPOSIT MODAL - RESTORED HERE -->
 <div id="deposit-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm">
         <h3 class="text-xl font-bold mb-4 text-blue-800 lang lang-en">Deposit Funds (Manual)</h3>
@@ -207,62 +207,6 @@
     </div>
 </div>
 
-<!-- SERVICE SELECT MODAL -->
-<div id="service-select-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-xl">
-        <h3 class="text-xl font-bold mb-4 text-blue-800 lang lang-en">Select Service Type</h3>
-        <h3 class="text-xl font-bold mb-4 text-blue-800 lang lang-ur urdu hidden">سروس کی قسم منتخب کریں</h3>
-        
-        <p class="text-lg font-bold mb-4"><span id="selected-platform-display-en" class="lang lang-en"></span><span id="selected-platform-display-ur" class="lang lang-ur urdu hidden urdu"></span></p>
-
-        <div id="service-options-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <!-- Service buttons will be injected here by JS -->
-        </div>
-
-        <button onclick="closeModal('service-select-modal')" class="text-gray-500 mt-5 w-full hover:text-gray-700 lang lang-en">Cancel</button>
-    </div>
-</div>
-
-<!-- DEDICATED ORDER FORM MODAL -->
-<div id="order-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-lg">
-        <h3 class="text-xl font-bold mb-4 text-blue-800 lang lang-en">Place New Order</h3>
-        <h3 class="text-xl font-bold mb-4 text-blue-800 lang lang-ur urdu hidden">نیا آرڈر کریں</h3>
-        
-        <input type="hidden" id="order-service-name">
-        <input type="hidden" id="order-service-price">
-        
-        <p class="mb-3 text-sm lang lang-en">Platform: <strong id="order-platform-display"></strong> | Service: <strong id="order-service-display"></strong></p>
-        <p class="mb-3 text-sm lang lang-ur urdu hidden urdu">پلیٹ فارم: <strong id="order-platform-display-ur"></strong> | سروس: <strong id="order-service-display-ur"></strong></p>
-
-        <label class="block mb-2 text-sm lang lang-en">Link/URL:</label>
-        <label class="block mb-2 text-sm lang lang-ur urdu hidden">لنک/یو آر ایل:</label>
-        <input type="url" id="order-link" placeholder="Enter your profile or post link" class="w-full p-3 border mb-3 rounded-lg">
-        
-        <label class="block mb-2 text-sm lang lang-en">Sender Name/Reference (Optional):</label>
-        <label class="block mb-2 text-sm lang lang-ur urdu hidden">بھیجنے والے کا نام/حوالہ (اختیاری):</label>
-        <input type="text" id="order-sender-ref" placeholder="JazzCash/EasyPaisa Sender Name or Tx Ref" class="w-full p-3 border mb-3 rounded-lg">
-
-        <label class="block mb-2 text-sm lang lang-en">Quantity (in 1000s, Min 1k):</label>
-        <label class="block mb-2 text-sm lang lang-ur urdu hidden">مقدار (ہزاروں میں، کم از کم 1k):</label>
-        <input type="number" id="order-quantity" placeholder="e.g., 1 for 1000 items" min="1" class="w-full p-3 border mb-3 rounded-lg">
-
-        <p class="mb-4 text-md font-semibold text-gray-700 lang lang-en">
-            Total Cost: <span id="order-total-cost" class="text-red-500">$0.00</span>
-        </p>
-        <p class="mb-4 text-md font-semibold text-gray-700 lang lang-ur urdu hidden urdu">
-            کل لاگت: <span id="order-total-cost-ur" class="text-red-500">$0.00</span>
-        </p>
-        
-        <p id="order-error" class="text-red-500 text-sm mb-4 hidden"></p>
-
-        <button id="order-btn-submit" class="bg-blue-600 text-white w-full py-3 rounded-lg font-semibold hover:bg-blue-700 lang lang-en">Confirm Order</button>
-        <button id="order-btn-submit-ur" class="bg-blue-600 text-white w-full py-3 rounded-lg font-semibold hover:bg-blue-700 lang lang-ur urdu hidden">آرڈر کی تصدیق کریں</button>
-        <button onclick="closeModal('order-modal')" class="text-gray-500 mt-3 w-full hover:text-gray-700 lang lang-en">Cancel</button>
-    </div>
-</div>
-
-
 <!-- Hero Section -->
 <section class="gradient py-10 px-4">
   <div class="max-w-5xl mx-auto flex flex-col md:flex-row items-center">
@@ -274,7 +218,7 @@
       <h1 class="text-3xl md:text-4xl font-bold mb-3 lang lang-en">Professional Social Media Growth Services</h1>
       <h1 class="text-3xl md:text-4xl font-bold mb-3 lang lang-ur urdu hidden">پروفیشنل سوشل میڈیا گروتھ سروسز</h1>
       <p class="mb-5 text-lg lang lang-en">
-      Life time Guaranteed Only Facebook Not Guaranteed life time Boost your influence with <b>real</b> and <b>safe</b> followers, views, and engagement across all major platforms. Local payment options & 24/7 support!
+        Boost your influence with <b>real</b> and <b>safe</b> followers, views, and engagement across all major platforms. Local payment options & 24/7 support!
       </p>
       <p class="mb-5 text-lg lang lang-ur urdu hidden">
         اپنی سوشل میڈیا پاور بڑھائیں! فالوورز اور ویوز حاصل کریں، مکمل مقامی پیمنٹ اور بہترین سپورٹ کے ساتھ۔
@@ -297,46 +241,224 @@
         <span class="text-4xl sm:text-5xl text-pink-400 mb-3"><i class="fab fa-tiktok"></i></span>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-en">TikTok Services</h3>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-ur urdu hidden">ٹک ٹاک سروسز</h3>
-        <button onclick="openServiceSelectModal('TikTok', 'ٹک ٹاک')" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
+        <button onclick="if(auth.currentUser) { scrollToDashboard(); showDashboardTab('orders'); document.getElementById('order-category-select').value = 'TikTok'; updateOrderFormUI(); } else { openModal('login-modal'); }" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
       </div>
       <!-- Instagram -->
       <div class="bg-blue-50 hover:shadow-xl rounded-lg p-5 flex flex-col items-center text-center transition duration-300">
         <span class="text-4xl sm:text-5xl text-pink-600 mb-3"><i class="fab fa-instagram"></i></span>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-en">Instagram Services</h3>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-ur urdu hidden">انسٹاگرام سروسز</h3>
-        <button onclick="openServiceSelectModal('Instagram', 'انسٹاگرام')" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
+        <button onclick="if(auth.currentUser) { scrollToDashboard(); showDashboardTab('orders'); document.getElementById('order-category-select').value = 'Instagram'; updateOrderFormUI(); } else { openModal('login-modal'); }" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
       </div>
       <!-- YouTube -->
       <div class="bg-blue-50 hover:shadow-xl rounded-lg p-5 flex flex-col items-center text-center transition duration-300">
         <span class="text-4xl sm:text-5xl text-red-500 mb-3"><i class="fab fa-youtube"></i></span>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-en">YouTube Services</h3>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-ur urdu hidden">یوٹیوب سروسز</h3>
-        <button onclick="openServiceSelectModal('YouTube', 'یوٹیوب')" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
+        <button onclick="if(auth.currentUser) { scrollToDashboard(); showDashboardTab('orders'); document.getElementById('order-category-select').value = 'YouTube'; updateOrderFormUI(); } else { openModal('login-modal'); }" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
       </div>
       <!-- Facebook -->
       <div class="bg-blue-50 hover:shadow-xl rounded-lg p-5 flex flex-col items-center text-center transition duration-300">
         <span class="text-4xl sm:text-5xl text-blue-700 mb-3"><i class="fab fa-facebook-square"></i></span>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-en">Facebook Services</h3>
         <h3 class="text-base sm:text-lg font-bold mb-2 lang lang-ur urdu hidden">فیس بک سروسز</h3>
-        <button onclick="openServiceSelectModal('Facebook', 'فیس بک')" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
+        <button onclick="if(auth.currentUser) { scrollToDashboard(); showDashboardTab('orders'); document.getElementById('order-category-select').value = 'Facebook'; updateOrderFormUI(); } else { openModal('login-modal'); }" class="mt-3 bg-blue-600 text-white w-full py-2 text-sm rounded-lg font-bold hover:bg-blue-700 transition">Order Now</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Pricing Tables Section -->
-<section id="pricing" class="py-14 bg-blue-50 px-4">
-  <div class="max-w-7xl mx-auto">
-    <h2 class="text-2xl font-bold mb-8 text-blue-900 text-center lang lang-en">Key Service Pricing (Price/1k)</h2>
-    <h2 class="text-2xl font-bold mb-8 text-blue-900 text-center lang lang-ur urdu hidden">اہم سروسز کی قیمتیں (قیمت/1k)</h2>
-    <div id="price-display-section" class="flex flex-wrap justify-center gap-4 text-center">
-        <!-- Live Prices injected here -->
-        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">TikTok F:</span> <span id="price-TikTok-Followers">$0.00</span></div>
-        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">IG L:</span> <span id="price-Instagram-Likes">$0.00</span></div>
-        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">YT V:</span> <span id="price-YouTube-Views">$0.00</span></div>
-        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">FB F:</span> <span id="price-Facebook-Followers">$0.00</span></div>
+
+<!-- Customer Dashboard Section (Mobile Optimized) -->
+<section id="user-dashboard" class="py-10 sm:py-14 bg-gray-100 hidden px-4">
+    <div class="max-w-7xl mx-auto">
+        
+        <!-- Welcome Section from Image -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6 border-l-4 border-yellow-500">
+            <p class="text-red-500 font-bold text-center mb-2 lang lang-en">بسم الله الرحمن الرحيم</p>
+            <p class="text-red-500 font-bold text-center mb-2 lang lang-ur urdu hidden">بسم الله الرحمن الرحيم</p>
+            <h2 class="text-xl font-bold text-center mb-3 text-blue-900 lang lang-en">Hey <span id="welcome-username">User</span>, Welcome! 😊</h2>
+            <h2 class="text-xl font-bold text-center mb-3 text-blue-900 lang lang-ur urdu hidden">ہیلو <span id="welcome-username-ur">یوزر</span>، خوش آمدید! 😊</h2>
+            <p class="text-red-500 text-sm text-center mb-4 lang lang-en">Posting On WhatsApp Support Number Or Any Other Payment Number Is Strictly Prohibited! 🚫</p>
+            <p class="text-red-500 text-sm text-center mb-4 lang lang-ur urdu hidden">واٹس ایپ سپورٹ نمبر یا کسی اور پیمنٹ نمبر پر پوسٹ کرنا سختی سے منع ہے! 🚫</p>
+            <div class="flex justify-center space-x-4 text-2xl">
+                <i class="fab fa-tiktok text-pink-500"></i>
+                <i class="fab fa-instagram text-purple-600"></i>
+                <i class="fab fa-facebook text-blue-600"></i>
+                <i class="fab fa-youtube text-red-600"></i>
+                <i class="fab fa-twitter text-blue-400"></i>
+                <i class="fab fa-telegram text-blue-500"></i>
+                <i class="fab fa-snapchat text-yellow-500"></i>
+            </div>
+        </div>
+
+        <!-- User Info Cards from Image (Green Background) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-green-500 text-white p-4 rounded-lg shadow">
+                <p class="text-sm font-semibold lang lang-en">Username</p>
+                <p class="text-sm font-semibold lang lang-ur urdu hidden">یوزر نیم</p>
+                <p id="dashboard-username" class="text-xl font-bold mt-1">N/A</p>
+            </div>
+            <div class="bg-green-500 text-white p-4 rounded-lg shadow">
+                <p class="text-sm font-semibold lang lang-en">Your Spent</p>
+                <p class="text-sm font-semibold lang lang-ur urdu hidden">آپ کا خرچ</p>
+                <p id="user-spent" class="text-xl font-bold mt-1">N/A</p>
+            </div>
+            <div class="bg-green-500 text-white p-4 rounded-lg shadow">
+                <p class="text-sm font-semibold lang lang-en">Total Orders</p>
+                <p class="text-sm font-semibold lang lang-ur urdu hidden">کل آرڈرز</p>
+                <p id="total-orders-count" class="text-xl font-bold mt-1">N/A</p>
+            </div>
+            <div class="bg-green-500 text-white p-4 rounded-lg shadow">
+                <p class="text-sm font-semibold lang lang-en">Total Balance</p>
+                <p class="text-sm font-semibold lang lang-ur urdu hidden">کل بیلنس</p>
+                <p id="user-balance" class="text-xl font-bold mt-1">N/A</p>
+            </div>
+        </div>
+        
+        <!-- Deposit Funds Button - MOVED HERE, under the green cards -->
+        <div class="flex justify-end mb-6"> 
+            <button onclick="openModal('deposit-modal')" class="bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition lang lang-en">Deposit Funds</button>
+            <button onclick="openModal('deposit-modal')" class="bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition lang lang-ur urdu hidden">فنڈز جمع کرائیں</button>
+        </div>
+
+
+        <!-- Dashboard Tabs -->
+        <div class="flex overflow-x-auto whitespace-nowrap mb-4 border-b border-gray-300">
+            <button id="tab-orders" onclick="showDashboardTab('orders')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 lang lang-en dashboard-nav-link">Order Form / History</button>
+            <button id="tab-orders-ur" onclick="showDashboardTab('orders')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">آرڈر فارم / ہسٹری</button>
+            
+            <button id="tab-deposits" onclick="showDashboardTab('deposits')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-en dashboard-nav-link">Deposit History</button>
+            <button id="tab-deposits-ur" onclick="showDashboardTab('deposits')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">ڈپازٹ ہسٹری</button>
+
+            <button id="tab-reviews" onclick="showDashboardTab('reviews')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-en dashboard-nav-link">Reviews</button>
+            <button id="tab-reviews-ur" onclick="showDashboardTab('reviews')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">ریویوز</button>
+        </div>
+
+        <!-- Content Area: Order Form & History -->
+        <div id="dashboard-content-orders" class="space-y-4">
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Place New Order</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">نیا آرڈر کریں</h2>
+
+            <div id="new-order-form" class="bg-white p-4 sm:p-6 rounded-lg shadow-lg mb-6">
+                <!-- Hidden inputs to hold selected service details -->
+                <input type="hidden" id="order-form-selected-platform-en">
+                <input type="hidden" id="order-form-selected-service-en">
+                <input type="hidden" id="order-form-price-per-k-usd">
+
+                <input type="text" id="order-search-service" placeholder="Search for a service..." class="w-full p-3 border mb-3 rounded-lg lang lang-en">
+                <input type="text" placeholder="سروس تلاش کریں..." class="w-full p-3 border mb-3 rounded-lg lang lang-ur urdu hidden">
+
+                <div class="mb-4">
+                    <label for="order-category-select" class="block text-sm font-medium text-gray-700 mb-2 lang lang-en">Category:</label>
+                    <label for="order-category-select" class="block text-sm font-medium text-gray-700 mb-2 lang lang-ur urdu hidden">کیٹگری:</label>
+                    <select id="order-category-select" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" onchange="populateOrderServices();">
+                        <option value="">-- Select Category --</option>
+                        <!-- Categories will be populated by JS -->
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label for="order-service-select" class="block text-sm font-medium text-gray-700 mb-2 lang lang-en">Services:</label>
+                    <label for="order-service-select" class="block text-sm font-medium text-gray-700 mb-2 lang lang-ur urdu hidden">سروسز:</label>
+                    <select id="order-service-select" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" onchange="updateOrderFormDetails();">
+                        <option value="">-- Select Service --</option>
+                        <!-- Services will be populated by JS -->
+                    </select>
+                </div>
+
+                <!-- Service Description -->
+                <div class="bg-blue-50 p-3 rounded-lg mb-4 text-sm">
+                    <p class="font-bold text-blue-800 mb-1 lang lang-en">Description:</p>
+                    <p class="font-bold text-blue-800 mb-1 lang lang-ur urdu hidden">تفصیل:</p>
+                    <p id="service-description" class="text-gray-800 lang lang-en">Please select a service to see its description.</p>
+                    <p id="service-description-ur" class="text-gray-800 lang lang-ur urdu hidden">برائے مہربانی تفصیل دیکھنے کے لیے ایک سروس منتخب کریں۔</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="order-link-input" class="block text-sm font-medium text-gray-700 mb-2 lang lang-en">Link:</label>
+                    <label for="order-link-input" class="block text-sm font-medium text-gray-700 mb-2 lang lang-ur urdu hidden">لنک:</label>
+                    <input type="url" id="order-link-input" placeholder="Enter your profile or post link" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm font-medium text-gray-700 mb-2 lang lang-en">Average Time:</p>
+                    <p class="text-sm font-medium text-gray-700 mb-2 lang lang-ur urdu hidden">اوسط وقت:</p>
+                    <p id="service-average-time" class="text-blue-700 font-semibold lang lang-en">N/A</p>
+                    <p id="service-average-time-ur" class="text-blue-700 font-semibold lang lang-ur urdu hidden">دستیاب نہیں</p>
+                </div>
+
+                <div class="mb-4">
+                    <label for="order-quantity-input" class="block text-sm font-medium text-gray-700 mb-2 lang lang-en">Quantity:</label>
+                    <label for="order-quantity-input" class="block text-sm font-medium text-gray-700 mb-2 lang lang-ur urdu hidden">مقدار:</label>
+                    <input type="number" id="order-quantity-input" min="100" max="9999999" value="100" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="updateOrderAmountCharge();">
+                    <p id="quantity-min-max-info" class="text-xs text-gray-500 mt-1 lang lang-en">Min: 100 - Max: 9999999</p>
+                    <p id="quantity-min-max-info-ur" class="text-xs text-gray-500 mt-1 lang lang-ur urdu hidden">کم از کم: 100 - زیادہ سے زیادہ: 9999999</p>
+                </div>
+
+                <div class="mb-4">
+                    <p class="text-lg font-bold text-gray-700 lang lang-en">Amount Charge:</p>
+                    <p class="text-lg font-bold text-gray-700 lang lang-ur urdu hidden">چارج کی رقم:</p>
+                    <p id="order-amount-charge" class="text-green-600 text-xl font-extrabold mt-1">N/A</p>
+                </div>
+
+                <p id="order-form-error" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button id="confirm-order-btn" class="bg-red-600 text-white w-full py-3 rounded-lg font-bold hover:bg-red-700 lang lang-en">Confirm Order</button>
+                <button id="confirm-order-btn-ur" class="bg-red-600 text-white w-full py-3 rounded-lg font-bold hover:bg-red-700 lang lang-ur urdu hidden">آرڈر کی تصدیق کریں</button>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Your Orders History</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">آپ کے آرڈرز کی ہسٹری</h2>
+            <div id="order-list" class="space-y-4">
+                <!-- Orders will be injected here -->
+            </div>
+        </div>
+
+        <!-- Content Area: Deposit History -->
+        <div id="dashboard-content-deposits" class="space-y-4 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Your Deposits</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">آپ کے ڈپازٹس</h2>
+            <div id="deposit-list" class="space-y-4">
+                <!-- Deposits will be injected here -->
+            </div>
+        </div>
+
+        <!-- Content Area: Reviews & Testimonials -->
+        <div id="dashboard-content-reviews" class="space-y-4 hidden">
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Leave Your Review</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">اپنا ریویو دیں</h2>
+            
+            <!-- Review Form -->
+            <div id="review-form-tab-content" class="bg-white p-4 sm:p-6 rounded-lg shadow mb-6 hidden">
+                <input type="text" id="review-name" placeholder="Your Name (e.g., Ali R.)" class="w-full p-3 border mb-3 rounded-lg" required>
+                
+                <div class="flex items-center mb-3">
+                    <span class="mr-3 text-sm lang lang-en">Rating:</span>
+                    <span class="mr-3 text-sm lang lang-ur urdu hidden">ریٹنگ:</span>
+                    <div id="review-stars" data-rating="0" class="star-rating text-yellow-400 text-xl">
+                        <i class="far fa-star" data-value="1"></i>
+                        <i class="far fa-star" data-value="2"></i>
+                        <i class="far fa-star" data-value="3"></i>
+                        <i class="far fa-star" data-value="4"></i>
+                        <i class="far fa-star" data-value="5"></i>
+                    </div>
+                    <span id="rating-value-display" class="ml-3 text-gray-600 text-sm">0 / 5</span>
+                </div>
+
+                <textarea id="review-comment" placeholder="Your experience..." rows="3" class="w-full p-3 border mb-4 rounded-lg" required></textarea>
+                
+                <button id="submit-review-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full lang lang-en">Submit Review</button>
+                <button id="submit-review-btn-ur" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full lang lang-ur urdu hidden">ریویو جمع کرائیں</button>
+            </div>
+
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">All Customer Testimonials</h2>
+            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">تمام کسٹمر ریویوز</h2>
+            <div id="testimonials-list" class="grid gap-6 md:grid-cols-2">
+                <!-- Reviews injected here -->
+            </div>
+        </div>
+
     </div>
-  </div>
 </section>
 
 <!-- Payment Methods Section -->
@@ -353,6 +475,21 @@
       <img src="https://i.ibb.co/PGzYQcpp/1000210331.jpg" alt="Easypaisa" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
       <img src="https://i.ibb.co/KjNW071p/1000210333.jpg" alt="myABL" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
       <img src="https://cdn-icons-png.flaticon.com/512/7208/7208609.png" alt="Upaisa" class="h-10 w-10 sm:h-14 sm:w-14 bg-gray-100 p-1 rounded shadow">
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Tables Section - MOVED HERE -->
+<section id="pricing" class="py-14 bg-blue-50 px-4">
+  <div class="max-w-7xl mx-auto">
+    <h2 class="text-2xl font-bold mb-8 text-blue-900 text-center lang lang-en">Key Service Pricing (Price/1k)</h2>
+    <h2 class="text-2xl font-bold mb-8 text-blue-900 text-center lang lang-ur urdu hidden">اہم سروسز کی قیمتیں (قیمت/1k)</h2>
+    <div id="price-display-section" class="flex flex-wrap justify-center gap-4 text-center">
+        <!-- Live Prices injected here -->
+        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">TikTok F:</span> <span id="price-TikTok-Followers">$0.00</span></div>
+        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">IG L:</span> <span id="price-Instagram-Likes">$0.00</span></div>
+        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">YT V:</span> <span id="price-YouTube-Views">$0.00</span></div>
+        <div class="bg-white shadow-lg rounded-lg p-4 w-32 sm:w-40 text-sm"><span class="font-bold">FB F:</span> <span id="price-Facebook-Followers">$0.00</span></div>
     </div>
   </div>
 </section>
@@ -498,91 +635,6 @@
       <span class="lang lang-ur urdu hidden"><i class="fas fa-phone text-blue-700"></i> +92 313 0599032</span>
     </div>
   </div>
-</section>
-
-<!-- Customer Dashboard Section (Mobile Optimized) -->
-<section id="user-dashboard" class="py-10 sm:py-14 bg-gray-100 hidden px-4">
-    <div class="max-w-7xl mx-auto">
-        
-        <!-- Wallet/Balance Card -->
-        <div class="bg-white p-4 sm:p-6 rounded-lg shadow-lg mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center border-l-4 border-yellow-500">
-            <div>
-                <h3 class="text-lg sm:text-xl font-bold text-blue-900 lang lang-en">Current Balance:</h3>
-                <h3 class="text-lg sm:text-xl font-bold text-blue-900 lang lang-ur urdu hidden">موجودہ بیلنس:</h3>
-                <p class="text-2xl sm:text-3xl font-extrabold text-green-600 mt-1"><span id="user-balance">$0.00</span></p> <!-- Removed 'USD' here -->
-            </div>
-            <button onclick="openModal('deposit-modal')" class="mt-3 sm:mt-0 bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition lang lang-en">Deposit Funds</button>
-            <button onclick="openModal('deposit-modal')" class="mt-3 sm:mt-0 bg-yellow-500 text-blue-900 px-4 py-2 rounded-lg font-bold hover:bg-yellow-400 transition lang lang-ur urdu hidden">فنڈز جمع کرائیں</button>
-        </div>
-
-        <!-- Dashboard Tabs -->
-        <div class="flex overflow-x-auto whitespace-nowrap mb-4 border-b border-gray-300">
-            <button id="tab-orders" onclick="showDashboardTab('orders')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 lang lang-en dashboard-nav-link">Order History</button>
-            <button id="tab-orders-ur" onclick="showDashboardTab('orders')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-blue-600 text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">آرڈر ہسٹری</button>
-            
-            <button id="tab-deposits" onclick="showDashboardTab('deposits')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-en dashboard-nav-link">Deposit History</button>
-            <button id="tab-deposits-ur" onclick="showDashboardTab('deposits')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">ڈپازٹ ہسٹری</button>
-
-            <button id="tab-reviews" onclick="showDashboardTab('reviews')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-en dashboard-nav-link">Reviews</button>
-            <button id="tab-reviews-ur" onclick="showDashboardTab('reviews')" class="flex-shrink-0 px-4 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 lang lang-ur urdu hidden dashboard-nav-link">ریویوز</button>
-        </div>
-
-        <!-- Content Area: Order History -->
-        <div id="dashboard-content-orders" class="space-y-4">
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Your Orders</h2>
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">آپ کے آرڈرز</h2>
-            <div id="order-list" class="space-y-4">
-                <!-- Orders will be injected here -->
-            </div>
-        </div>
-
-        <!-- Content Area: Deposit History -->
-        <div id="dashboard-content-deposits" class="space-y-4 hidden">
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Your Deposits</h2>
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">آپ کے ڈپازٹس</h2>
-            <div id="deposit-list" class="space-y-4">
-                <!-- Deposits will be injected here -->
-            </div>
-        </div>
-
-        <!-- Content Area: Reviews & Testimonials -->
-        <div id="dashboard-content-reviews" class="space-y-4 hidden">
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">Leave Your Review</h2>
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">اپنا ریویو دیں</h2>
-            
-            <!-- Review Form -->
-            <div id="review-form-tab-content" class="bg-white p-4 sm:p-6 rounded-lg shadow mb-6 hidden">
-                <input type="text" id="review-name" placeholder="Your Name (e.g., Ali R.)" class="w-full p-3 border mb-3 rounded-lg" required>
-                
-                <div class="flex items-center mb-3">
-                    <span class="mr-3 text-sm lang lang-en">Rating:</span>
-                    <span class="mr-3 text-sm lang lang-ur urdu hidden">ریٹنگ:</span>
-                    <div id="review-stars" data-rating="0" class="star-rating text-yellow-400 text-xl">
-                        <i class="far fa-star" data-value="1"></i>
-                        <i class="far fa-star" data-value="2"></i>
-                        <i class="far fa-star" data-value="3"></i>
-                        <i class="far fa-star" data-value="4"></i>
-                        <i class="far fa-star" data-value="5"></i>
-                    </div>
-                    <span id="rating-value-display" class="ml-3 text-gray-600 text-sm">0 / 5</span>
-                </div>
-
-                <textarea id="review-comment" placeholder="Your experience..." rows="3" class="w-full p-3 border mb-4 rounded-lg" required></textarea>
-                
-                <button id="submit-review-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full lang lang-en">Submit Review</button>
-                <button id="submit-review-btn-ur" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition w-full lang lang-ur urdu hidden">ریویو جمع کرائیں</button>
-            </div>
-
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-en">All Customer Testimonials</h2>
-            <h2 class="text-xl sm:text-2xl font-bold text-blue-900 mb-4 lang lang-ur urdu hidden">تمام کسٹمر ریویوز</h2>
-            <div id="testimonials-list" class="grid gap-6 md:grid-cols-2">
-                <!-- Reviews injected here -->
-            </div>
-        </div>
-
-    </div>
-</section>
-
 <!-- Footer -->
 <footer class="bg-blue-800 text-blue-100 py-6 sm:py-8 text-center px-4">
   <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm">
