@@ -9,7 +9,7 @@ const firebaseConfig = {
     storageBucket: "traffic-exchange-62a58.appspot.com",
     messagingSenderId: "474999317287",
     appId: "1:474999317287:web:8e28a2f5f1a959d8ce3f02",
-    measurementId: "G-HJQ46QNZS" // Corrected Measurement ID (assuming it was a typo in original)
+    measurementId: "G-HJQ46QNzS" 
 };
 
 if (!firebase.apps.length) {
@@ -1034,38 +1034,50 @@ const STATIC_TESTIMONIALS = [
   { name: "Komal Anwar 1000", comment: "Overall reliable service lagi, recommend kar sakti hoon.", rating: 5, initialColor: '#db2777', isStatic: true },
         ];
 
+// --- LIVE SERVICE METADATA & PRICING ---
+let SERVICE_METADATA = {}; // Will hold platform & service details (desc, avg_time, min/max) from Firestore
+let SERVICE_PRICING = {}; // Will hold the actual live pricing data from Firestore.
 
-// --- SERVICE DATA (Structure for services/urdu translation) ---
-const SERVICE_DATA = {
-    'TikTok': { urdu: 'ٹک ٹاک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-    'Instagram': { urdu: 'انسٹاگرام', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-    'YouTube': { urdu: 'یوٹیوب', services: { 'Subscribers': { urdu: 'سبسکرائبرز' }, 'Likes': { urdu: 'پسندیدگیاں' }, 'Views': { urdu: 'ویوز' }, 'Comments': { urdu: 'کمنٹس' } } },
-    'Facebook': { urdu: 'فیس بک', services: { 'Followers': { urdu: 'فالورز' }, 'Likes': { urdu: 'لائکس' }, 'Views': { urdu: 'ویوز' }, 'Reactions': { urdu: 'ری ایکشنز' } } }
-};
-
-// --- LIVE PRICING DATA & DEFAULTS ---
-let SERVICE_DATA_PRICES = {}; // This will hold the actual live pricing data from Firestore.
-
-// This is the FALLBACK pricing. If the 'servicePricing' document in Firestore is not found or is empty,
-// these prices will be used.
-//
-// **********************************************************************************************
-// *                                 CRITICAL PRICE WARNING                                     *
-// **********************************************************************************************
+// --- FALLBACK PRICING (if Firestore fails for prices) ---
 // WARNING: These values represent the COST PER 1000 UNITS.
 // For example, 0.00368 means $0.00368 for 1000 followers. This is extremely low.
 // If you meant $3.68 for 1000 items, the value should be 3.68.
-//
-// I have updated the display functions to show the full precision (0.00368) for small values,
-// but please VERIFY if this pricing is INTENDED.
-// If 0.00368 is meant to be the price for *1 unit*, then the price per 1000 units should be 3.68.
-// If 0.00368 is meant to be the price for *1000 units*, then this is an extremely low price.
 const DEFAULT_PRICING_FALLBACK = {
     'TikTok': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
     'Instagram': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
     'YouTube': { 'Subscribers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Comments': 0.00368 },
     'Facebook': { 'Followers': 0.00368, 'Likes': 0.00368, 'Views': 0.00368, 'Reactions': 0.00368 }
 };
+
+// --- FALLBACK METADATA (if Firestore fails for metadata) ---
+// This provides a basic structure and default values if no admin configuration is loaded.
+const DEFAULT_METADATA_FALLBACK = {
+    'TikTok': { urdu: 'ٹک ٹاک', services: { 
+        'Followers': { urdu: 'فالورز', desc_en: 'High-quality TikTok followers, fast delivery, no drop guarantee.', desc_ur: 'اعلیٰ کوالٹی کے ٹک ٹاک فالوورز، تیز ڈیلیوری، کوئی ڈراپ گارنٹی نہیں۔', avg_time: '1-3 Hours', min: 100, max: 1000000 },
+        'Likes': { urdu: 'پسندیدگیاں', desc_en: 'Real TikTok likes for your videos, instant start.', desc_ur: 'آپ کی ویڈیوز کے لیے اصلی ٹک ٹاک لائکس، فوری آغاز۔', avg_time: '0-2 Hours', min: 50, max: 500000 },
+        'Views': { urdu: 'ویوز', desc_en: 'Boost your video views quickly, worldwide audience.', desc_ur: 'اپنی ویڈیو کے ویوز تیزی سے بڑھائیں، عالمی سامعین۔', avg_time: '0-1 Hours', min: 1000, max: 50000000 },
+        'Comments': { urdu: 'کمنٹس', desc_en: 'Custom or random comments for your TikTok posts.', desc_ur: 'اپنی ٹک ٹاک پوسٹس کے لیے کسٹم یا رینڈم کمنٹس۔', avg_time: '2-5 Hours', min: 10, max: 1000 } 
+    } },
+    'Instagram': { urdu: 'انسٹاگرام', services: { 
+        'Followers': { urdu: 'فالورز', desc_en: 'Premium Instagram followers, stable and active accounts.', desc_ur: 'پریمیم انسٹاگرام فالوورز، مستحکم اور فعال اکاؤنٹس۔', avg_time: '1-4 Hours', min: 100, max: 500000 }, 
+        'Likes': { urdu: 'پسندیدگیاں', desc_en: 'Instant Instagram likes for any post.', desc_ur: 'کسی بھی پوسٹ کے لیے فوری انسٹاگرام لائکس۔', avg_time: '0-1 Hours', min: 50, max: 1000000 }, 
+        'Views': { urdu: 'ویوز', desc_en: 'High retention Instagram video views.', desc_ur: 'اعلیٰ برقرار رکھنے والے انسٹاگرام ویڈیو ویوز۔', avg_time: '0-30 Mins', min: 500, max: 10000000 }, 
+        'Comments': { urdu: 'کمنٹس', desc_en: 'Engaging comments on your Instagram photos/videos.', desc_ur: 'اپنی انسٹاگرام تصاویر/ویڈیوز پر دلچسپ کمنٹس۔', avg_time: '2-6 Hours', min: 10, max: 500 } 
+    } },
+    'YouTube': { urdu: 'یوٹیوب', services: { 
+        'Subscribers': { urdu: 'سبسکرائبرز', desc_en: 'Real YouTube subscribers to grow your channel.', desc_ur: 'اپنے چینل کو بڑھانے کے لیے اصلی یوٹیوب سبسکرائبرز۔', avg_time: '2-8 Hours', min: 10, max: 10000 }, 
+        'Likes': { urdu: 'پسندیدگیاں', desc_en: 'Genuine YouTube likes for your video content.', desc_ur: 'آپ کے ویڈیو مواد کے لیے حقیقی یوٹیوب لائکس۔', avg_time: '1-3 Hours', min: 20, max: 50000 }, 
+        'Views': { urdu: 'ویوز', desc_en: 'High-quality YouTube views with good watch time.', desc_ur: 'اچھے دیکھنے کے وقت کے ساتھ اعلیٰ کوالٹی کے یوٹیوب ویوز۔', avg_time: '3-12 Hours', min: 1000, max: 10000000 }, 
+        'Comments': { urdu: 'کمنٹس', desc_en: 'Boost engagement with custom YouTube comments.', desc_ur: 'کسٹم یوٹیوب کمنٹس کے ساتھ مصروفیت میں اضافہ کریں۔', avg_time: '4-10 Hours', min: 5, max: 500 } 
+    } },
+    'Facebook': { urdu: 'فیس بک', services: { 
+        'Followers': { urdu: 'فالورز', desc_en: 'Authentic Facebook page/profile followers.', desc_ur: 'حقیقی فیس بک پیج/پروفائل فالوورز۔', avg_time: '1-5 Hours', min: 50, max: 200000 }, 
+        'Likes': { urdu: 'لائکس', desc_en: 'Real likes for your Facebook posts.', desc_ur: 'آپ کی فیس بک پوسٹس کے لیے اصلی لائکس۔', avg_time: '0-2 Hours', min: 50, max: 500000 }, 
+        'Views': { urdu: 'ویوز', desc_en: 'Organic Facebook video views.', desc_ur: 'آرگینک فیس بک ویڈیو ویوز۔', avg_time: '0-30 Mins', min: 500, max: 5000000 }, 
+        'Reactions': { urdu: 'ری ایکشنز', desc_en: 'Custom Facebook reactions (Love, Haha, Wow, Sad, Angry).', desc_ur: 'کسٹم فیس بک ری ایکشنز (Love, Haha, Wow, Sad, Angry)۔', avg_time: '1-3 Hours', min: 20, max: 10000 } 
+    } }
+};
+
 
 // --- PAYMENT DETAILS ---
 const PAYMENT_ACCOUNTS = {
@@ -1131,15 +1143,15 @@ function getCurrencySymbol() {
 
 // Formats a number for display based on its value
 function formatConvertedPrice(value) {
-    // If value is very small (e.g., 0.00368), show more decimal places, otherwise standard 2
-    // Also ensures that 0 is displayed as 0.00
     if (value === 0) {
         return "0.00";
     }
-    if (Math.abs(value) < 0.01) { // Check for non-zero small values
-        return value.toFixed(5); // e.g., 0.00368
+    // For very small values (like 0.00368), show more decimal places
+    if (Math.abs(value) < 0.01) { 
+        return value.toFixed(5); 
     }
-    return value.toFixed(2); // e.g., 3.68, 123.45
+    // For other values, show 2 decimal places (standard currency format)
+    return value.toFixed(2); 
 }
 
 // ------------------- UI & Language Functions -------------------
@@ -1207,7 +1219,7 @@ function showDashboardTab(tabName) {
     
     tabs.forEach(name => contents[name].classList.add('hidden'));
 
-    document.querySelectorAll('.dashboard-nav-link').forEach(tab => { // Use class for all dashboard tabs
+    document.querySelectorAll('.dashboard-nav-link').forEach(tab => { 
         tab.classList.remove('border-blue-600', 'text-blue-600');
         tab.classList.add('text-gray-600', 'hover:text-blue-600', 'border-transparent');
     });
@@ -1219,7 +1231,11 @@ function showDashboardTab(tabName) {
     });
 
     if (auth.currentUser) {
-        if (tabName === 'orders') loadUserOrders(auth.currentUser.uid);
+        if (tabName === 'orders') {
+            loadUserOrders(auth.currentUser.uid); // This will load order history
+            populateOrderCategories(); // Also populate the new order form
+            updateOrderFormUI(); // Ensure form is updated with correct data
+        }
         if (tabName === 'deposits') loadUserDeposits(auth.currentUser.uid);
     }
     
@@ -1237,13 +1253,6 @@ function toggleMobileMenu() {
     const menu = document.getElementById('mobile-menu-dropdown');
     menu.classList.toggle('open');
 }
-
-// FAQ toggle
-document.querySelectorAll('#faq-list .faq').forEach(faq => {
-    faq.addEventListener('click', function() {
-        faq.classList.toggle('active');
-    });
-});
 
 // ------------------- INITIALS AVATAR LOGIC -------------------
 
@@ -1290,34 +1299,80 @@ function getUserStatusClass(status) {
 }
 
 
-// ------------------- LIVE PRICE LOGIC (using updateAllPrices) -------------------
+// ------------------- LIVE PRICING & METADATA LOGIC -------------------
 
-async function loadServicePrices() {
-    db.collection('prices').doc('servicePricing').onSnapshot(doc => { 
-        if (doc.exists && doc.data()) {
-            SERVICE_DATA_PRICES = doc.data();
-            console.log("Using prices from Firestore 'servicePricing' document.");
-        } else {
-            SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
-            console.warn("Firestore 'servicePricing' document not found or empty. Using DEFAULT_PRICING_FALLBACK.");
-        }
-        updateAllPrices(); // Now calls the central update function
-    }, error => {
-        console.error("Error fetching service prices from Firestore, using defaults:", error);
-        SERVICE_DATA_PRICES = DEFAULT_PRICING_FALLBACK;
-        updateAllPrices(); // Still update UI with fallbacks on error
+// Fetches both service metadata and pricing data from Firestore
+async function loadServiceMetadataAndPricing() {
+    // Load Service Metadata from 'serviceMetadata/data'
+    const metadataPromise = new Promise((resolve) => {
+        db.collection('serviceMetadata').doc('data').onSnapshot(doc => {
+            if (doc.exists && doc.data()) {
+                SERVICE_METADATA = doc.data();
+                console.log("Service metadata loaded from Firestore.");
+            } else {
+                SERVICE_METADATA = DEFAULT_METADATA_FALLBACK;
+                console.warn("Firestore 'serviceMetadata/data' not found or empty. Using DEFAULT_METADATA_FALLBACK.");
+            }
+            resolve();
+        }, error => {
+            console.error("Error fetching service metadata, using defaults:", error);
+            SERVICE_METADATA = DEFAULT_METADATA_FALLBACK;
+            resolve();
+        });
     });
+
+    // Load Service Pricing from 'prices/servicePricing'
+    const pricingPromise = new Promise((resolve) => {
+        db.collection('prices').doc('servicePricing').onSnapshot(doc => { 
+            if (doc.exists && doc.data()) {
+                SERVICE_PRICING = doc.data();
+                console.log("Service pricing loaded from Firestore 'servicePricing' document.");
+            } else {
+                SERVICE_PRICING = DEFAULT_PRICING_FALLBACK;
+                console.warn("Firestore 'servicePricing' document not found or empty. Using DEFAULT_PRICING_FALLBACK.");
+            }
+            resolve();
+        }, error => {
+            console.error("Error fetching service prices from Firestore, using defaults:", error);
+            SERVICE_PRICING = DEFAULT_PRICING_FALLBACK;
+            resolve();
+        });
+    });
+
+    // Wait for both to load before updating UI
+    await Promise.all([metadataPromise, pricingPromise]);
+    updateAllPrices(); // Always update UI after loading all data
 }
 
+// Gets the price for a specific service (in USD)
 function getPriceForService(platform, service) {
-    if (SERVICE_DATA_PRICES[platform] && SERVICE_DATA_PRICES[platform][service] !== undefined) {
-        return parseFloat(SERVICE_DATA_PRICES[platform][service]);
+    // Prioritize dynamically loaded prices
+    if (SERVICE_PRICING[platform] && SERVICE_PRICING[platform][service] !== undefined) {
+        return parseFloat(SERVICE_PRICING[platform][service]);
     }
+    // Fallback to static defaults if dynamic data is missing for a specific service/platform
     if (DEFAULT_PRICING_FALLBACK[platform] && DEFAULT_PRICING_FALLBACK[platform][service] !== undefined) {
         return parseFloat(DEFAULT_PRICING_FALLBACK[platform][service]);
     }
     return 0.00; // Default to 0 if price isn't found anywhere
 }
+
+// Gets metadata (description, time, min/max) for a specific service
+function getMetadataForService(platform, service) {
+    if (SERVICE_METADATA[platform] && SERVICE_METADATA[platform].services && SERVICE_METADATA[platform].services[service]) {
+        return SERVICE_METADATA[platform].services[service];
+    }
+    // Fallback to a generic object if metadata is missing
+    return { 
+        urdu: service, 
+        desc_en: 'No description available for this service.', 
+        desc_ur: 'اس سروس کے لیے کوئی تفصیل دستیاب نہیں۔', 
+        avg_time: 'N/A', 
+        min: 100, // Default min quantity
+        max: 9999999 // Default max quantity
+    };
+}
+
 
 // Central function to update all prices in the UI
 function updateAllPrices() {
@@ -1337,21 +1392,12 @@ function updateAllPrices() {
         }
     }
     
-    // 2. Re-render any open service selection or order modals to reflect new prices
-    const serviceSelectModal = document.getElementById('service-select-modal');
-    if (serviceSelectModal && !serviceSelectModal.classList.contains('hidden')) {
-        const platformEn = document.getElementById('selected-platform-display-en').textContent;
-        const platformUr = document.getElementById('selected-platform-display-ur').textContent;
-        openServiceSelectModal(platformEn, platformUr); 
-    }
-    const orderModal = document.getElementById('order-modal');
-    if (orderModal && !orderModal.classList.contains('hidden')) {
-        updateOrderCost(); // Just update the cost in the current order modal if it's open
-    }
+    // Update amount charge in the new order form (if visible)
+    updateOrderAmountCharge(); 
 
     // 3. Update dashboard prices (balance, order history, deposit history) IF logged in
     if (auth.currentUser) {
-        loadUserProfile(auth.currentUser.uid); // Will update user balance
+        loadUserProfile(auth.currentUser.uid); // Will update user balance and other stats
         // Re-load the currently active dashboard tab to refresh its content with new currency
         const activeTabElement = document.querySelector('.dashboard-nav-link.border-blue-600');
         if (activeTabElement) {
@@ -1388,31 +1434,78 @@ function displayPaymentDetails() {
 
 async function loadUserProfile(userId) {
     try {
-        const doc = await db.collection('users').doc(userId).get();
-        if (doc.exists) {
-            const userData = doc.data();
+        const userDoc = await db.collection('users').doc(userId).get();
+        if (userDoc.exists) {
+            const userData = userDoc.data();
+            const username = userData.name || auth.currentUser.email.split('@')[0];
+            
+            // Update welcome section username
+            const welcomeUsernameEl = document.getElementById('welcome-username');
+            const welcomeUsernameUrEl = document.getElementById('welcome-username-ur');
+            if (welcomeUsernameEl) welcomeUsernameEl.textContent = username;
+            if (welcomeUsernameUrEl) welcomeUsernameUrEl.textContent = username;
+            
+            // Update dashboard username card
+            const dashboardUsernameEl = document.getElementById('dashboard-username');
+            if (dashboardUsernameEl) dashboardUsernameEl.textContent = username;
+
             const usdBalance = parseFloat(userData.balance || 0);
             const convertedBalance = convertPriceToSelectedCurrency(usdBalance);
-            // User balance should always be displayed with 2 decimal places as it's a currency balance
-            document.getElementById('user-balance').textContent = `${getCurrencySymbol()}${convertedBalance.toFixed(2)}`;
+            const userBalanceEl = document.getElementById('user-balance');
+            if (userBalanceEl) userBalanceEl.textContent = `${getCurrencySymbol()}${convertedBalance.toFixed(2)}`;
+
+            // Calculate total spent and total orders count
+            let totalSpentUSD = 0;
+            let totalOrdersCount = 0;
+            const ordersSnapshot = await db.collection('orders').where('userId', '==', userId).get();
+            ordersSnapshot.forEach(doc => {
+                const orderData = doc.data();
+                totalSpentUSD += parseFloat(orderData.totalCost || 0);
+                totalOrdersCount++;
+            });
+
+            const convertedTotalSpent = convertPriceToSelectedCurrency(totalSpentUSD);
+            const userSpentEl = document.getElementById('user-spent');
+            const totalOrdersCountEl = document.getElementById('total-orders-count');
+
+            if (userSpentEl) userSpentEl.textContent = `${getCurrencySymbol()}${convertedTotalSpent.toFixed(2)}`;
+            if (totalOrdersCountEl) totalOrdersCountEl.textContent = totalOrdersCount.toString();
+
             return userData;
         } else {
-             // If user doc doesn't exist, create it with default balance in USD
              await db.collection('users').doc(userId).set({ balance: '0.00' }, { merge: true });
-             document.getElementById('user-balance').textContent = `${getCurrencySymbol()}0.00`;
+             const userBalanceEl = document.getElementById('user-balance');
+             const userSpentEl = document.getElementById('user-spent');
+             const totalOrdersCountEl = document.getElementById('total-orders-count');
+             const dashboardUsernameEl = document.getElementById('dashboard-username');
+
+             if (userBalanceEl) userBalanceEl.textContent = `${getCurrencySymbol()}0.00`;
+             if (userSpentEl) userSpentEl.textContent = `${getCurrencySymbol()}0.00`;
+             if (totalOrdersCountEl) totalOrdersCountEl.textContent = '0';
+             if (dashboardUsernameEl) dashboardUsernameEl.textContent = auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest'; // Default username
+
              return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
         }
     } catch (e) {
-        console.error("Error loading user profile:", e);
+        console.error("Error loading user profile and stats:", e);
     }
-    document.getElementById('user-balance').textContent = `${getCurrencySymbol()}0.00`;
+    const userBalanceEl = document.getElementById('user-balance');
+    const userSpentEl = document.getElementById('user-spent');
+    const totalOrdersCountEl = document.getElementById('total-orders-count');
+    const dashboardUsernameEl = document.getElementById('dashboard-username');
+
+    if (userBalanceEl) userBalanceEl.textContent = `${getCurrencySymbol()}0.00`;
+    if (userSpentEl) userSpentEl.textContent = `${getCurrencySymbol()}0.00`;
+    if (totalOrdersCountEl) totalOrdersCountEl.textContent = 'N/A';
+    if (dashboardUsernameEl) dashboardUsernameEl.textContent = 'N/A';
+
     return { balance: '0.00', name: auth.currentUser ? auth.currentUser.email.split('@')[0] : 'Guest' };
 }
 
 
 function loadUserOrders(userId) {
     const orderListEl = document.getElementById('order-list');
-    orderListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your orders...</p>`;
+    orderListEl.innerHTML = `<p class="p-4 text-center text-blue-600">Loading your orders history...</p>`; 
 
     db.collection('orders')
       .where('userId', '==', userId)
@@ -1442,10 +1535,11 @@ function loadUserOrders(userId) {
 
             let statusTextUrdu = '';
             if (status === 'Pending') statusTextUrdu = 'زیر التواء';
-            else if (status === 'Approved' || status === 'Processing') statusTextUrdu = 'منظور شدہ';
+            else if (status === 'Processing') statusTextUrdu = 'کارروائی جاری'; 
+            else if (status === 'Approved') statusTextUrdu = 'منظور شدہ';
             else if (status === 'Complete') statusTextUrdu = 'مکمل';
             else if (status === 'Canceled') statusTextUrdu = 'منسوخ';
-
+            else if (status === 'Rejected') statusTextUrdu = 'مسترد'; 
 
             const date = formatDate(data.createdAt);
             const isCanceled = data.status === 'Canceled';
@@ -1457,7 +1551,7 @@ function loadUserOrders(userId) {
                         <p class="font-bold text-base text-blue-900 lang lang-ur urdu hidden urdu">${service} (مقدار: ${quantity})</p>
                         <p class="text-xs text-gray-600 lang lang-en">Cost: ${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)} | Ordered on: ${date}</p>
                         <p class="text-xs text-gray-600 lang lang-ur urdu hidden urdu">لاگت: ${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)} | تاریخ: ${date}</p>
-                        <p class="text-xs text-gray-400 lang lang-en">Link: <span class="order-card-link">${link}</span> (Ref: ${senderReference})</p>
+                        <p class="text-xs text-gray-400 lang lang-en">Link: <span class="order-card-link">${link}</span> ${senderReference !== 'N/A' ? `(Ref: ${senderReference})` : ''}</p>
                         ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-en">Reason: ${data.cancelMessage}</p>` : ''}
                         ${isCanceled && data.cancelMessage ? `<p class="text-red-500 text-xs mt-1 lang lang-ur urdu hidden urdu">وجہ: ${data.cancelMessage}</p>` : ''}
                     </div>
@@ -1770,123 +1864,245 @@ async function handleSubmitReview() {
 }
 
 
-// ------------------- SERVICE SELECTION & ORDERING LOGIC -------------------
+// ------------------- NEW ORDERING LOGIC (Integrated into Dashboard) -------------------
 
-function openServiceSelectModal(platformEn, platformUr) {
-    const user = auth.currentUser;
-    if (!user) {
-        alert("Please log in or sign up to place an order.");
-        openModal('login-modal');
-        return;
+// Helper to get elements for the new order form
+const getOrderFormElements = () => ({
+    categorySelect: document.getElementById('order-category-select'),
+    serviceSelect: document.getElementById('order-service-select'),
+    descriptionEl: document.getElementById('service-description'),
+    descriptionUrEl: document.getElementById('service-description-ur'),
+    linkInput: document.getElementById('order-link-input'),
+    averageTimeEl: document.getElementById('service-average-time'),
+    averageTimeUrEl: document.getElementById('service-average-time-ur'),
+    quantityInput: document.getElementById('order-quantity-input'),
+    quantityMinMaxInfoEl: document.getElementById('quantity-min-max-info'),
+    quantityMinMaxInfoUrEl: document.getElementById('quantity-min-max-info-ur'),
+    amountChargeEl: document.getElementById('order-amount-charge'),
+    platformEnHidden: document.getElementById('order-form-selected-platform-en'),
+    serviceEnHidden: document.getElementById('order-form-selected-service-en'),
+    pricePerKUsdHidden: document.getElementById('order-form-price-per-k-usd'),
+    errorEl: document.getElementById('order-form-error')
+});
+
+function populateOrderCategories() {
+    const { categorySelect } = getOrderFormElements();
+    if (!categorySelect) return;
+
+    categorySelect.innerHTML = '<option value="">-- Select Category --</option>';
+    // Get platforms from the dynamically loaded SERVICE_METADATA
+    const platforms = Object.keys(SERVICE_METADATA).sort(); 
+    platforms.forEach(platformEn => {
+        const option = document.createElement('option');
+        option.value = platformEn;
+        // Use metadata for Urdu translation
+        option.textContent = currentLanguage === 'en' ? platformEn : SERVICE_METADATA[platformEn].urdu;
+        categorySelect.appendChild(option);
+    });
+    // Set default if there's a pre-selected category (e.g., from hero section click)
+    const initialPlatform = document.getElementById('order-form-selected-platform-en').value;
+    if(initialPlatform && SERVICE_METADATA[initialPlatform]) {
+        categorySelect.value = initialPlatform;
+        populateOrderServices(); // Populate services for the pre-selected category
+    } else {
+        // Clear services if no category pre-selected or platform not found
+        populateOrderServices();
     }
+}
+
+function populateOrderServices() {
+    const { categorySelect, serviceSelect, descriptionEl, descriptionUrEl, averageTimeEl, averageTimeUrEl, quantityInput, quantityMinMaxInfoEl, quantityMinMaxInfoUrEl, amountChargeEl, platformEnHidden, serviceEnHidden, pricePerKUsdHidden, errorEl } = getOrderFormElements();
+    if (!serviceSelect) return;
+
+    const selectedCategoryEn = categorySelect.value;
+    serviceSelect.innerHTML = '<option value="">-- Select Service --</option>';
     
-    if (Object.keys(SERVICE_DATA_PRICES).length === 0) {
-        alert("Pricing data is still loading. Please wait a moment.");
-        return;
+    // Reset all dependent fields
+    platformEnHidden.value = '';
+    serviceEnHidden.value = '';
+    pricePerKUsdHidden.value = '0';
+    descriptionEl.textContent = 'Please select a service to see its description.';
+    descriptionUrEl.textContent = 'برائے مہربانی تفصیل دیکھنے کے لیے ایک سروس منتخب کریں۔';
+    averageTimeEl.textContent = 'N/A';
+    averageTimeUrEl.textContent = 'دستیاب نہیں';
+    quantityInput.min = 100;
+    quantityInput.max = 9999999;
+    quantityInput.value = 100;
+    quantityMinMaxInfoEl.textContent = 'Min: 100 - Max: 9999999';
+    quantityMinMaxInfoUrEl.textContent = 'کم از کم: 100 - زیادہ سے زیادہ: 9999999';
+    amountChargeEl.textContent = 'N/A';
+    errorEl.classList.add('hidden');
+
+    if (selectedCategoryEn && SERVICE_METADATA[selectedCategoryEn] && SERVICE_METADATA[selectedCategoryEn].services) {
+        const services = SERVICE_METADATA[selectedCategoryEn].services;
+        const serviceKeys = Object.keys(services).sort();
+        serviceKeys.forEach(serviceNameEn => {
+            const option = document.createElement('option');
+            option.value = serviceNameEn;
+            option.textContent = currentLanguage === 'en' ? serviceNameEn : services[serviceNameEn].urdu;
+            serviceSelect.appendChild(option);
+        });
     }
+}
 
-    document.getElementById('selected-platform-display-en').textContent = platformEn;
-    document.getElementById('selected-platform-display-ur').textContent = platformUr;
 
-    const container = document.getElementById('service-options-container');
-    container.innerHTML = ''; 
-    
-    const services = SERVICE_DATA[platformEn].services;
-    
-    for (const serviceNameEn in services) {
-        const priceUSD = getPriceForService(platformEn, serviceNameEn); // Get price in USD
-        const convertedPrice = convertPriceToSelectedCurrency(priceUSD); // Convert for display
-        const data = services[serviceNameEn];
+function updateOrderFormDetails() {
+    const { categorySelect, serviceSelect, descriptionEl, descriptionUrEl, linkInput, averageTimeEl, averageTimeUrEl, quantityInput, quantityMinMaxInfoEl, quantityMinMaxInfoUrEl, platformEnHidden, serviceEnHidden, pricePerKUsdHidden, amountChargeEl } = getOrderFormElements();
+
+    const selectedCategoryEn = categorySelect.value;
+    const selectedServiceEn = serviceSelect.value;
+
+    platformEnHidden.value = selectedCategoryEn;
+    serviceEnHidden.value = selectedServiceEn;
+    pricePerKUsdHidden.value = '0'; // Reset price
+
+    if (selectedCategoryEn && selectedServiceEn && SERVICE_METADATA[selectedCategoryEn] && SERVICE_METADATA[selectedCategoryEn].services[selectedServiceEn]) {
+        const serviceDetails = getMetadataForService(selectedCategoryEn, selectedServiceEn); // Get dynamic metadata
+        const pricePerK = getPriceForService(selectedCategoryEn, selectedServiceEn); // This is in USD for calculations
+
+        descriptionEl.textContent = serviceDetails.desc_en;
+        descriptionUrEl.textContent = serviceDetails.desc_ur;
+        averageTimeEl.textContent = serviceDetails.avg_time;
+        averageTimeUrEl.textContent = serviceDetails.avg_time; 
         
-        const buttonHtml = `
-            <button onclick="openOrderModal('${platformEn}', '${platformUr}', '${serviceNameEn}', '${data.urdu}', ${priceUSD})" 
-                    class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 font-semibold text-left transition duration-150">
-                <span class="lang lang-en">${serviceNameEn} <span class="text-yellow-300">(${getCurrencySymbol()}${formatConvertedPrice(convertedPrice)}/1k)</span></span>
-                <span class="lang lang-ur urdu hidden urdu">${data.urdu} <span class="text-yellow-300">(${getCurrencySymbol()}${formatConvertedPrice(convertedPrice)}/1k)</span></span>
-            </button>
-        `;
-        container.insertAdjacentHTML('beforeend', buttonHtml);
+        // Update quantity min/max from metadata
+        quantityInput.min = serviceDetails.min; // Already has fallback in getMetadataForService
+        quantityInput.max = serviceDetails.max;
+        quantityMinMaxInfoEl.textContent = `Min: ${serviceDetails.min} - Max: ${serviceDetails.max}`;
+        quantityMinMaxInfoUrEl.textContent = `کم از کم: ${serviceDetails.min} - زیادہ سے زیادہ: ${serviceDetails.max}`;
+        
+        // Ensure quantity is within bounds after updating min/max
+        let currentQuantity = parseInt(quantityInput.value);
+        if (isNaN(currentQuantity) || currentQuantity < quantityInput.min) {
+            quantityInput.value = quantityInput.min;
+        } else if (currentQuantity > quantityInput.max) {
+            quantityInput.value = quantityInput.max;
+        }
+
+        pricePerKUsdHidden.value = pricePerK.toString(); // Store USD price
+        updateOrderAmountCharge(); // Recalculate based on new service and quantity
+    } else {
+        // Reset to default if no valid service selected
+        descriptionEl.textContent = 'Please select a service to see its description.';
+        descriptionUrEl.textContent = 'برائے مہربانی تفصیل دیکھنے کے لیے ایک سروس منتخب کریں۔';
+        averageTimeEl.textContent = 'N/A';
+        averageTimeUrEl.textContent = 'دستیاب نہیں';
+        quantityInput.min = 100;
+        quantityInput.max = 9999999;
+        quantityInput.value = 100;
+        quantityMinMaxInfoEl.textContent = 'Min: 100 - Max: 9999999';
+        quantityMinMaxInfoUrEl.textContent = 'کم از کم: 100 - زیادہ سے زیادہ: 9999999';
+        amountChargeEl.textContent = 'N/A';
     }
-    
     applyCurrentLanguage();
-
-    openModal('service-select-modal');
 }
 
-function openOrderModal(platformEn, platformUr, serviceEn, serviceUr, priceUSD) { // Pass price in USD
-    
-    closeModal('service-select-modal'); 
+function updateOrderAmountCharge() {
+    const { quantityInput, pricePerKUsdHidden, amountChargeEl, errorEl } = getOrderFormElements();
 
-    document.getElementById('order-service-name').value = `${platformEn} ${serviceEn}`;
-    document.getElementById('order-service-price').value = priceUSD; // Store/use USD price for calculations
-    
-    document.getElementById('order-platform-display').textContent = platformEn;
-    document.getElementById('order-platform-display-ur').textContent = platformUr;
-    document.getElementById('order-service-display').textContent = serviceEn;
-    document.getElementById('order-service-display-ur').textContent = serviceUr;
-
-    document.getElementById('order-link').value = '';
-    document.getElementById('order-sender-ref').value = ''; 
-    document.getElementById('order-quantity').value = 1; 
-    
-    // Initial cost displayed in selected currency
-    const initialCostUSD = (1 * priceUSD);
-    const convertedInitialCost = convertPriceToSelectedCurrency(initialCostUSD);
-    document.getElementById('order-total-cost').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedInitialCost)}`;
-    document.getElementById('order-total-cost-ur').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedInitialCost)}`;
-    document.getElementById('order-error').classList.add('hidden');
-
-    applyCurrentLanguage();
-
-    openModal('order-modal');
-}
-
-document.getElementById('order-quantity').addEventListener('input', updateOrderCost);
-
-function updateOrderCost() {
-    const quantityInput = document.getElementById('order-quantity');
-    const pricePerK_USD = parseFloat(document.getElementById('order-service-price').value); // Get USD price
+    const pricePerK_USD = parseFloat(pricePerKUsdHidden.value); // Price for 1000 units in USD
     let quantity = parseInt(quantityInput.value);
 
-    if (quantity < 1 || isNaN(quantity)) {
-        quantity = 1;
-        quantityInput.value = 1;
+    // Validate quantity against min/max from input attributes
+    const minQty = parseInt(quantityInput.min);
+    const maxQty = parseInt(quantityInput.max);
+
+    if (isNaN(quantity) || quantity < minQty) {
+        quantity = minQty;
+        quantityInput.value = minQty;
+    } else if (quantity > maxQty) {
+        quantity = maxQty;
+        quantityInput.value = maxQty;
     }
 
-    const totalCostUSD = (quantity * pricePerK_USD); // Calculate total cost in USD
-    const convertedTotalCost = convertPriceToSelectedCurrency(totalCostUSD); // Convert for display
+    if (pricePerK_USD === 0 || isNaN(pricePerK_USD)) {
+        amountChargeEl.textContent = 'N/A';
+        return;
+    }
 
-    document.getElementById('order-total-cost').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)}`;
-    document.getElementById('order-total-cost-ur').textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)}`;
+    // Calculate total cost in USD. The stored price is per 1000 units.
+    // So, if pricePerK_USD is for 1000, then (quantity / 1000) * pricePerK_USD
+    const totalCostUSD = (quantity / 1000) * pricePerK_USD; 
+    const convertedTotalCost = convertPriceToSelectedCurrency(totalCostUSD);
+    amountChargeEl.textContent = `${getCurrencySymbol()}${formatConvertedPrice(convertedTotalCost)}`;
+    errorEl.classList.add('hidden'); // Clear any previous errors on input change
 }
 
-document.getElementById('order-btn-submit').addEventListener('click', handleOrderSubmission);
-document.getElementById('order-btn-submit-ur').addEventListener('click', handleOrderSubmission);
+function updateOrderFormUI() {
+    populateOrderCategories();
+    // Then ensure the selected category is re-selected if a platform was passed from hero section
+    const categorySelect = document.getElementById('order-category-select');
+    const platformEnHidden = document.getElementById('order-form-selected-platform-en');
+    const initialPlatform = platformEnHidden.value;
+    if(initialPlatform && SERVICE_METADATA[initialPlatform]) {
+        categorySelect.value = initialPlatform;
+        platformEnHidden.value = ''; // Clear the hidden field after use
+    } else if (categorySelect.value === "") {
+        // If nothing is selected, try to select the first category if available
+        if (categorySelect.options.length > 1) {
+             categorySelect.value = categorySelect.options[1].value;
+        }
+    }
+    populateOrderServices();
+    // Then ensure the selected service is re-selected if one was pre-selected, otherwise trigger update for first service
+    const serviceSelect = document.getElementById('order-service-select');
+    const serviceEnHidden = document.getElementById('order-form-selected-service-en');
+    const initialService = serviceEnHidden.value;
+    if(initialService && SERVICE_METADATA[categorySelect.value] && SERVICE_METADATA[categorySelect.value].services[initialService]) {
+        serviceSelect.value = initialService;
+        serviceEnHidden.value = ''; // Clear the hidden field after use
+    } else if (serviceSelect.value === "") {
+        if (serviceSelect.options.length > 1) {
+             serviceSelect.value = serviceSelect.options[1].value;
+        }
+    }
+    updateOrderFormDetails();
+    applyCurrentLanguage(); // Ensure language is applied
+}
+
+// Event listeners for the new dashboard order form
+document.getElementById('order-category-select').addEventListener('change', populateOrderServices);
+document.getElementById('order-service-select').addEventListener('change', updateOrderFormDetails);
+document.getElementById('order-quantity-input').addEventListener('input', updateOrderAmountCharge); 
+
+document.getElementById('confirm-order-btn').addEventListener('click', handleOrderSubmission);
+document.getElementById('confirm-order-btn-ur').addEventListener('click', handleOrderSubmission);
 
 async function handleOrderSubmission() {
     const user = auth.currentUser;
-    if (!user) return;
-    
-    const serviceName = document.getElementById('order-service-name').value;
-    const pricePerK_USD = parseFloat(document.getElementById('order-service-price').value); // USD price
-    const link = document.getElementById('order-link').value;
-    const senderRef = document.getElementById('order-sender-ref').value; 
-    const quantityK = parseInt(document.getElementById('order-quantity').value); 
-    
-    const errorEl = document.getElementById('order-error');
-    errorEl.classList.add('hidden');
+    if (!user) {
+        alert("Please log in to place an order.");
+        openModal('login-modal');
+        return;
+    }
 
-    if (!link || quantityK < 1) {
-        errorEl.textContent = "Please provide a valid link and quantity (min 1k).";
+    const { categorySelect, serviceSelect, linkInput, quantityInput, pricePerKUsdHidden, errorEl } = getOrderFormElements();
+    
+    const selectedCategoryEn = categorySelect.value;
+    const selectedServiceEn = serviceSelect.value;
+    const link = linkInput.value;
+    const quantity = parseInt(quantityInput.value);
+    const pricePerK_USD = parseFloat(pricePerKUsdHidden.value); // Price for 1000 units in USD
+
+    errorEl.classList.add('hidden'); // Hide previous error
+
+    if (!selectedCategoryEn || !selectedServiceEn || !link || isNaN(quantity) || quantity < quantityInput.min || quantity > quantityInput.max) {
+        errorEl.textContent = "Please select a category and service, provide a valid link, and ensure quantity is within limits.";
         errorEl.classList.remove('hidden');
         return;
     }
-    
-    const totalCostUSD = quantityK * pricePerK_USD; // Total cost calculated in USD
-    const finalQuantity = quantityK * 1000; // Store actual number of items
+    if (pricePerK_USD === 0 || isNaN(pricePerK_USD)) {
+        errorEl.textContent = "Service price not available. Please try again or contact support.";
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    // Calculate total cost in USD (price is per 1000 units)
+    // Example: if quantity=500 and pricePerK_USD=0.00368, then (500/1000)*0.00368 = 0.5 * 0.00368 = 0.00184
+    const totalCostUSD = (quantity / 1000) * pricePerK_USD;
 
     const userData = await loadUserProfile(user.uid);
-    const currentBalanceUSD = parseFloat(userData.balance || 0); // Balance is in USD
+    const currentBalanceUSD = parseFloat(userData.balance || 0); // Balance is always in USD in Firebase
 
     if (currentBalanceUSD < totalCostUSD) {
         const convertedRequired = convertPriceToSelectedCurrency(totalCostUSD);
@@ -1899,29 +2115,36 @@ async function handleOrderSubmission() {
     try {
         const newBalanceUSD = currentBalanceUSD - totalCostUSD;
         
-        // Deduct balance - always store balance with 2 decimal places in USD
+        // Deduct balance in USD
         await db.collection('users').doc(user.uid).update({
             balance: newBalanceUSD.toFixed(2) 
         });
 
-        // Create Order - store totalCost in USD with full precision for data accuracy
+        // Create Order - store service name and actual total cost in USD
         await db.collection('orders').add({
             userId: user.uid,
             userName: userData.name || user.email,
-            service: serviceName,
+            platform: selectedCategoryEn,
+            service: `${selectedCategoryEn} ${selectedServiceEn}`, // e.g., "TikTok Followers"
             link: link,
-            senderReference: senderRef, 
-            quantity: finalQuantity,
-            totalCost: totalCostUSD.toFixed(5), // Store the actual USD cost
+            quantity: quantity,
+            totalCost: totalCostUSD.toFixed(5), // Store the actual USD cost with precision
             status: 'Pending', 
             createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
         alert(`Order placed successfully! New balance: ${getCurrencySymbol()}${newBalanceUSD.toFixed(2)}`);
-        closeModal('order-modal');
-        loadUserProfile(user.uid); 
-        loadUserOrders(user.uid); 
-
+        
+        // Reset form
+        categorySelect.value = '';
+        serviceSelect.innerHTML = '<option value="">-- Select Service --</option>';
+        linkInput.value = '';
+        quantityInput.value = quantityInput.min;
+        updateOrderFormDetails(); // Reset descriptions and costs
+        
+        loadUserProfile(user.uid); // Reload profile to update balance, spent, total orders
+        loadUserOrders(user.uid); // Reload order history
+        
     } catch (error) {
         console.error("Error during order transaction:", error);
         errorEl.textContent = "Order failed due to a server error. Please retry.";
@@ -2031,18 +2254,13 @@ auth.onAuthStateChanged((user) => {
 
         dashboardSection.classList.remove('hidden');
         
+        // This will now update dashboard stats as well.
         loadUserProfile(user.uid).then(userData => {
             document.getElementById('review-name').value = userData.name || user.email.split('@')[0];
         }); 
         
-        // Ensure the dashboard tab content is refreshed with current currency
-        const activeTabElement = document.querySelector('.dashboard-nav-link.border-blue-600');
-        if (activeTabElement) {
-            const activeTabName = activeTabElement.id.replace('tab-', '').replace('-ur', '');
-            showDashboardTab(activeTabName); 
-        } else {
-            showDashboardTab('orders'); // Default if no tab active
-        }
+        // Default to 'orders' tab which now contains the new order form
+        showDashboardTab('orders');
         
     } else {
         const loginButtonEn = `<button onclick="openModal('login-modal')" class="bg-white text-blue-600 font-bold px-3 py-1 text-xs sm:text-sm rounded-lg hover:bg-blue-100 lang lang-en">Login</button>`;
@@ -2117,7 +2335,6 @@ function initializeCurrencySelector() {
     if (currencySelects.length === 0) return;
 
     // Populate dropdown with all available currencies from the API
-    // Or fallback to manually added common currencies if API fails or no key
     const populateOptions = (selectElement) => {
         selectElement.innerHTML = ''; // Clear existing options
 
@@ -2149,7 +2366,7 @@ function initializeCurrencySelector() {
             
             // Sync both dropdowns if present
             currencySelects.forEach(otherSelect => {
-                if (otherSelect !== event.target) {
+                if (otherSelect && otherSelect !== event.target) {
                     otherSelect.value = selectedCurrency;
                 }
             });
@@ -2164,8 +2381,8 @@ function initializeCurrencySelector() {
 document.addEventListener('DOMContentLoaded', function() {
     // 0. Fetch exchange rates first
     fetchExchangeRates().finally(() => { // Use finally to ensure subsequent steps run even if API fails
-        // 1. Load Prices from Firestore (real-time listener)
-        loadServicePrices().then(() => {
+        // 1. Load Service Metadata and Pricing from Firestore (real-time listeners)
+        loadServiceMetadataAndPricing().then(() => {
             // 2. Initialize Chart
             let chartElement = document.getElementById('statsChart');
             if (chartElement) {
@@ -2195,16 +2412,17 @@ document.addEventListener('DOMContentLoaded', function() {
             auth.onAuthStateChanged(user => {
                 updateMobileMenuVisibility(user);
                 if (user) {
-                    // This will be called by updateAllPrices after loading user profile/balances
-                    // showDashboardTab('orders'); 
+                    // Pre-populate username field for review form
+                    loadUserProfile(user.uid).then(userData => {
+                        document.getElementById('review-name').value = userData.name || user.email.split('@')[0];
+                    });
+                    // showDashboardTab('orders') is called by onAuthStateChanged directly now
                 }
             });
         });
     });
-});
 
-// FAQ toggle initialization (should be done once DOM is ready)
-document.addEventListener('DOMContentLoaded', () => {
+    // FAQ toggle initialization (should be done once DOM is ready) - MOVED HERE to main DOMContentLoaded
     document.querySelectorAll('#faq-list .faq').forEach(faq => {
         faq.addEventListener('click', function() {
             this.classList.toggle('active');
