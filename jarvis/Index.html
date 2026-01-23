@@ -19,7 +19,7 @@
             padding: 0;
             background: var(--bg-dark);
             color: var(--text-main);
-            font-family: 'JetBrains+Mono', monospace;
+            font-family: 'JetBrains Mono', monospace; /* Corrected font name */
             height: 100vh;
             overflow: hidden;
             display: flex;
@@ -163,8 +163,10 @@
         }
 
         .log-entry { margin-bottom: 5px; }
-        .log-jarvis { color: var(--neon-cyan); font-weight: bold; }
+        .log-jarvisx { color: var(--neon-cyan); font-weight: bold; } /* Corrected class for Jarvis */
         .log-user { color: #fff; opacity: 0.7; }
+        .log-system { color: #aaa; opacity: 0.8; } /* Added for system messages */
+        .log-error { color: #ff004c; font-weight: bold; } /* Added for error messages */
 
     </style>
 </head>
@@ -179,16 +181,18 @@
             <div class="core-center"></div>
         </div>
 
-        <div class="terminal" id="terminal-output">
-            <div class="log-entry">SYSTEM: AWAITING NEURAL LINK...</div>
+        <div class="terminal" id="terminal-output" aria-live="polite">
+            <div class="log-entry"><span class="log-system">SYSTEM:</span> AWAITING NEURAL LINK...</div>
         </div>
 
         <div class="controls">
-            <input type="password" id="api-key" placeholder="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">
+            <!-- WARNING: Hardcoding API keys like this is a severe security risk. -->
+            <!-- For production, always use a secure backend to manage API keys. -->
+            <input type="password" id="api-key" value="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">
             <button onclick="toggleListening()" id="mic-btn">INITIALIZE</button>
         </div>
         
-        <div class="status-bar" id="status-text">SYSTEM IDLE</div>
+        <div class="status-bar" id="status-text" aria-live="polite">SYSTEM IDLE</div>
     </div>
 
     <script>
@@ -198,7 +202,8 @@
         const micBtn = document.getElementById('mic-btn');
         const apiKeyInput = document.getElementById('api-key');
 
-        let isListening = false;
+        let isListening = false; // Overall state if user wants JARVIS to be active
+        let isJarvisSpeaking = false; // Flag to prevent recognition from restarting during Jarvis's speech
         let recognition;
         let synth = window.speechSynthesis;
         let selectedVoice = null;
@@ -209,47 +214,86 @@
             // Priority: Google Natural Male -> Microsoft Natural -> Any Male US/IN
             selectedVoice = voices.find(v => v.name.includes('Google US English')) || 
                            voices.find(v => v.name.includes('Microsoft Christopher')) || 
+                           voices.find(v => v.lang === 'en-US' && v.name.includes('Male')) || // More general US male
                            voices.find(v => v.lang === 'en-IN' && v.name.includes('Male')) ||
-                           voices[0];
+                           voices[0]; // Fallback to any available voice
+            if (!selectedVoice) {
+                logToTerminal("ERROR", "No suitable speech synthesis voice found.");
+            }
         }
+        // Load voices once they are available
         if (speechSynthesis.onvoiceschanged !== undefined) {
             speechSynthesis.onvoiceschanged = loadVoices;
+        } else {
+            loadVoices(); // For browsers that might not fire the event or for immediate load
         }
+
 
         // --- Speech Recognition Setup ---
         if ('webkitSpeechRecognition' in window) {
             recognition = new webkitSpeechRecognition();
-            recognition.continuous = false;
+            recognition.continuous = false; // Only listen for a single utterance
             recognition.interimResults = false;
             recognition.lang = 'en-US';
 
             recognition.onstart = () => {
-                visualizer.classList.add('active');
-                updateStatus("LISTENING...");
+                if (isListening) { // Only update if user actively wants to listen
+                    visualizer.classList.add('active');
+                    updateStatus("LISTENING...");
+                }
             };
 
             recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 logToTerminal("USER", transcript);
+                // Stop visualizer and status before processing, it will restart when JARVIS speaks or finishes.
+                visualizer.classList.remove('active');
+                updateStatus("PROCESSING..."); 
                 processCommand(transcript);
             };
 
             recognition.onerror = (e) => {
-                console.error(e);
-                stopListening();
+                console.error("Speech Recognition Error:", e);
+                if (e.error === 'no-speech') {
+                    logToTerminal("SYSTEM", "No speech detected.");
+                } else if (e.error === 'not-allowed') {
+                    logToTerminal("ERROR", "Microphone access denied. Please allow in browser settings.");
+                } else {
+                    logToTerminal("ERROR", `Speech recognition error: ${e.error}`);
+                }
+                stopListening(false); // Do not attempt to restart on fatal error
             };
 
             recognition.onend = () => {
-                if(isListening) recognition.start(); // Keep listening loop
+                // IMPORTANT: Only restart if user wants to keep listening AND Jarvis isn't speaking
+                if (isListening && !isJarvisSpeaking) {
+                    recognition.start();
+                    updateStatus("LISTENING..."); // Ensure status is correct after a natural pause in recognition
+                } else if (!isListening) {
+                    updateStatus("IDLE"); // If stopped by user, ensure IDLE status
+                }
+                // If isJarvisSpeaking is true, the `speak` function will handle restarting recognition.
             };
+        } else {
+            logToTerminal("ERROR", "Speech recognition not supported in this browser.");
+            micBtn.disabled = true;
+            apiKeyInput.disabled = true;
+            micBtn.innerText = "NOT SUPPORTED";
         }
 
         function toggleListening() {
-            const key = apiKeyInput.value.trim();
-            if(!key) {
-                alert("Please provide OpenRouter API Key.");
+            if (!recognition) {
+                logToTerminal("ERROR", "Speech recognition API not available.");
                 return;
             }
+
+            const key = apiKeyInput.value.trim();
+            if(!key) {
+                logToTerminal("ERROR", "Please provide your OpenRouter API Key.");
+                apiKeyInput.focus();
+                return;
+            }
+
             if (isListening) {
                 stopListening();
             } else {
@@ -260,15 +304,22 @@
         function startListening() {
             isListening = true;
             micBtn.innerText = "TERMINATE";
+            micBtn.classList.add('active'); // Optional: add active style to button
             recognition.start();
+            logToTerminal("SYSTEM", "Neural link established. Awaiting command.");
         }
 
-        function stopListening() {
+        function stopListening(restartRecognition = true) {
             isListening = false;
             micBtn.innerText = "INITIALIZE";
-            recognition.stop();
+            micBtn.classList.remove('active');
+            // Only stop recognition if it's currently running, otherwise onerror might trigger
+            if (restartRecognition && recognition.recognizing) {
+                 recognition.stop(); // This will trigger onend, which then won't restart because isListening is false
+            }
             visualizer.classList.remove('active');
             updateStatus("IDLE");
+            logToTerminal("SYSTEM", "Neural link terminated.");
         }
 
         // --- AI Logic ---
@@ -281,20 +332,26 @@
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${apiKeyInput.value.trim()}`,
-                        "HTTP-Referer": window.location.href,
+                        // OpenRouter requires a referer for client-side API calls
+                        "HTTP-Referer": window.location.href, 
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        "model": "openai/gpt-3.5-turbo",
+                        "model": "openai/gpt-3.5-turbo", // or "anthropic/claude-3-haiku", "mistralai/mistral-7b-instruct"
                         "messages": [
                             {
                                 "role": "system", 
-                                "content": "You are Jarvis X. A calm, intelligent human assistant. No robotic phrases. Short, confident, human-like replies. Never over-explain. Use natural pauses."
+                                "content": "You are Jarvis X. A calm, intelligent, sophisticated, and concise human assistant, not a robot. You understand complex requests and will respond immediately in both English and Urdu. Always provide the English response first, followed by the Urdu translation. Never over-explain. Use natural pauses and phrasing. You primarily answer questions and execute commands. Do not initiate conversations or ask follow-up questions unless prompted."
                             },
                             {"role": "user", "content": text}
                         ]
                     })
                 });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API Error: ${response.status} - ${errorData.message || response.statusText}`);
+                }
 
                 const data = await response.json();
                 const reply = data.choices[0].message.content;
@@ -303,44 +360,93 @@
                 speak(reply);
 
             } catch (err) {
-                logToTerminal("ERROR", "Uplink failed. Check API key.");
+                logToTerminal("ERROR", `Uplink failed: ${err.message}. Please check your API key and network connection.`);
                 updateStatus("ERROR");
+                // If an error occurs, and we were supposed to be listening, try to resume
+                if (isListening) {
+                    updateStatus("LISTENING...");
+                    recognition.start();
+                }
             }
         }
 
         // --- Human-Like Voice Synthesis ---
         function speak(text) {
-            // Cancel any current speaking
-            synth.cancel();
+            synth.cancel(); // Cancel any current speaking
 
-            // 300-500ms Human-like pause before starting
-            setTimeout(() => {
-                const chunks = text.match(/[^.!?]+[.!?]*/g) || [text];
+            // If recognition is active, stop it before Jarvis speaks to prevent conflict
+            if (isListening && recognition.recognizing) {
+                recognition.stop();
+                isJarvisSpeaking = true; // Set flag
+            } else {
+                isJarvisSpeaking = false; // Ensure flag is false if recognition wasn't active
+            }
+
+            let speechText = text;
+            // Heuristic to try and get mainly English for speech, assuming English is first.
+            // This attempts to get the first sentence or what's before a clear Urdu section.
+            const firstNewline = text.indexOf('\n');
+            const firstUrduMarker = text.indexOf('اردو:'); // Common way to introduce Urdu
+            
+            if (firstNewline !== -1 && (firstUrduMarker === -1 || firstNewline < firstUrduMarker)) {
+                speechText = text.substring(0, firstNewline).trim();
+            } else if (firstUrduMarker !== -1) {
+                speechText = text.substring(0, firstUrduMarker).trim();
+            }
+            // If the text is very short or doesn't have these markers, we just speak the whole thing.
+            if (speechText.length < 5 && text.length > 5) { // If heuristic got a too short string, use more of original
+                 const firstSentenceMatch = text.match(/[^.!?]+[.!?]/);
+                 if (firstSentenceMatch) speechText = firstSentenceMatch[0].trim();
+                 else speechText = text.split('\n')[0].trim(); // Take first line if no sentence end found
+            }
+            if (!speechText) speechText = text; // Fallback to original text if nothing extracted
+
+            // Break down the speechText into chunks for natural pauses in speech
+            const chunks = speechText.match(/[^.!?]+[.!?]*/g) || [speechText];
+            
+            chunks.forEach((chunk, index) => {
+                const utterance = new SpeechSynthesisUtterance(chunk.trim());
+                utterance.voice = selectedVoice;
                 
-                chunks.forEach((chunk, index) => {
-                    const utterance = new SpeechSynthesisUtterance(chunk.trim());
-                    utterance.voice = selectedVoice;
-                    
-                    // Specific Human Parameters
-                    utterance.pitch = 0.9;  // Slightly deeper
-                    utterance.rate = 1.0;   // Normal speed
-                    utterance.volume = 1;
+                // Specific Human Parameters
+                utterance.pitch = 0.95;  // Slightly deeper than default
+                utterance.rate = 1.0;   // Normal speed
+                utterance.volume = 1;
 
+                // Only set onstart for the very first chunk
+                if (index === 0) {
                     utterance.onstart = () => {
                         visualizer.classList.add('active');
                         updateStatus("SPEAKING...");
                     };
+                }
 
+                // Only set onend for the very last chunk
+                if (index === chunks.length - 1) {
                     utterance.onend = () => {
-                        if (index === chunks.length - 1) {
-                            visualizer.classList.remove('active');
+                        visualizer.classList.remove('active');
+                        isJarvisSpeaking = false; // Reset flag
+
+                        // If user still wants to listen, restart recognition after Jarvis finishes
+                        if (isListening) {
+                            recognition.start();
                             updateStatus("LISTENING...");
+                        } else {
+                            updateStatus("IDLE");
                         }
                     };
+                }
+                
+                // If there's no selected voice, or it fails, log an error
+                if (!selectedVoice) {
+                    logToTerminal("ERROR", "Speech synthesis voice not available.");
+                    visualizer.classList.remove('active');
+                    if(isListening) recognition.start(); // Try to resume listening
+                    return;
+                }
 
-                    synth.speak(utterance);
-                });
-            }, 400);
+                synth.speak(utterance);
+            });
         }
 
         // --- UI Helpers ---
@@ -356,7 +462,7 @@
             statusText.innerText = `SYSTEM ${status}`;
         }
 
-        // Initial voice load
+        // Initial voice load in case onvoiceschanged doesn't fire immediately
         loadVoices();
     </script>
 </body>
